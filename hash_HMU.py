@@ -166,6 +166,9 @@ def hachage(s):
 
 
 #Verif : repartition 
+# on veut s'assurer que la proba d'avoir un '1' vaut 0.5
+# Pour cela, on hache des chaines de caractere aleatoires, et on mesure la frequence de '1' 
+
 
 def verif_repartition(I = 100,taille=36) :
 	hist = [0 for i in range(12)] # histogramme des probas d'apparition de '1'
@@ -181,6 +184,9 @@ def verif_repartition(I = 100,taille=36) :
 	return [x*100./I for x in hist]
 	
 
+# Pour vérifier que le hash est suffisamment éloigné, on prend 10 chaines se caractere
+# qui different d'au moins 1 caractere, et on regarde leur hache
+
 def verif_complexite(taille = 36):
 	s = ''
 	for j in range(taille) : 
@@ -192,36 +198,9 @@ def verif_complexite(taille = 36):
 		s2 = s[:j] + chr(a) + s[j+1:]
 		tab = tab + [s2]
 	for s in tab : 
-		print(s,hachage(s))
+		print hachage(s)
 	
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
