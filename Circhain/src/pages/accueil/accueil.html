@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Accueil</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+
+  <h3>Welcome to CirChain App!</h3>
+
+  <ion-list>
+    <ion-item *ngFor="let ecole of ecoles">
+      <ion-avatar item-left>
+        <img src="{{ecole.logo_ecole}}"/>
+      </ion-avatar>
+      <h2>{{ecole.id_ecole}}</h2>
+      <p class="item-description">{{ecole.nom_ecole}}</p>
+    </ion-item>
+  </ion-list>
+</ion-content>
