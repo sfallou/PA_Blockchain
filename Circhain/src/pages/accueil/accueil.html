@@ -3,22 +3,21 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Accueil</ion-title>
+    <ion-title>Connexion </ion-title>
   </ion-navbar>
 </ion-header>
 
-
 <ion-content padding>
-
-  <h3>Welcome to CirChain App! Cette page est un exemple d'appel de l'API du challenge pour afficher les écoles</h3>
-
-  <ion-list>
-    <ion-item *ngFor="let ecole of ecoles">
-      <ion-avatar item-left>
-        <img src="{{ecole.logo_ecole}}"/>
-      </ion-avatar>
-      <h2>{{ecole.id_ecole}}</h2>
-      <p class="item-description">{{ecole.nom_ecole}}</p>
+  <form [formGroup]="acteur" (ngSubmit)="loginForm()">
+    <ion-item>
+      <ion-label>Identifiant</ion-label>
+      <ion-input type="text" formControlName="id"></ion-input>
     </ion-item>
-  </ion-list>
+    <ion-item>
+      <ion-label>Mot de passe</ion-label>
+      <ion-input type="text" formControlName="mdp"></ion-input>
+    </ion-item>
+    <button ion-button type="submit" [disabled]="!acteur.valid">Submit</button>
+  </form>
+  {{acteur?.id}}
 </ion-content>
