@@ -10,14 +10,11 @@
 <ion-content>
   <ion-list>
     <button ion-item *ngFor="let item of cartes" (click)="itemTapped($event, item)">
-      <ion-icon name="{{item.icon}}" item-left></ion-icon>
-      {{item.title}}
-      <div class="item-note" item-right>
-        {{item.note}}
-      </div>
+      <ion-icon name="ios-barcode" item-left></ion-icon>
+      {{item.id_carte}}
     </button>
   </ion-list>
   <div *ngIf="selectedItem" padding>
-    You navigated here from <b>{{selectedItem.title}}</b>
+    You navigated here from <b>{{selectedItem.id_carte}}</b>
   </div>
 </ion-content>

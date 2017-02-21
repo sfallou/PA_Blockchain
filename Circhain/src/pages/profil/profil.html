@@ -10,8 +10,49 @@
 
 <ion-content padding>
 
-  <h3>Welcome to your profil!</h3>
+  <h3>
+    <ion-icon name="ios-contact-outline"></ion-icon>
+    Welcome to your profil
+  </h3>
 
+  <ion-list>
+
+    <ion-item>
+      <ion-icon name="ios-body-outline" item-left></ion-icon>
+      <b> Profil : </b> {{profil}}
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="ios-eye-outline" item-left></ion-icon>
+        <b> Identifiant : </b> {{id}}
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="ios-person-outline" item-left></ion-icon>
+      <b> Nom : </b> {{nom}}
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="ios-person-outline" item-left></ion-icon>
+      <b> Prénom : </b> {{prenom}}
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="at" item-left></ion-icon>
+      <b> Email : </b> {{email}}
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="ios-home-outline" item-left></ion-icon>
+      <b> Adresse : </b> {{adresse}}
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="ios-call-outline" item-left></ion-icon>
+      <b> Téléphone : </b> {{tel}}
+    </ion-item>
+
+  </ion-list>
 
 
 </ion-content>

@@ -3,21 +3,11 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Connexion </ion-title>
+    <ion-title>Accueil </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <form [formGroup]="acteur" (ngSubmit)="loginForm()">
-    <ion-item>
-      <ion-label>Identifiant</ion-label>
-      <ion-input type="text" formControlName="id"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label>Mot de passe</ion-label>
-      <ion-input type="text" formControlName="mdp"></ion-input>
-    </ion-item>
-    <button ion-button type="submit" [disabled]="!acteur.valid">Submit</button>
-  </form>
-  {{acteur?.id}}
+  <img src="img/nfc.png">
+
 </ion-content>
