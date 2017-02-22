@@ -1,10 +1,10 @@
 import {Component} from '@angular/core';
 import {Validators, FormBuilder, FormGroup } from '@angular/forms';
 import {NavController, NavParams} from 'ionic-angular';
-//import {CryptoJS} from '@types/cryptojs';
 import {CirchainService} from '../mesServices/circhainServices';
 import {LoginService} from '../mesServices/loginService';
-import {AccueilPage} from '../accueil/accueil';
+import { TabsPage } from '../tabs/tabs';
+
 @Component({
     templateUrl: 'login.html',
     providers: [CirchainService]
@@ -42,7 +42,7 @@ export class LoginPage {
               var profil = this.result['profil'];
               var tel = this.result['tel'];
               this.loginService.setInfosActeur(id,nom,prenom,email,mdp,adresse,profil,tel);
-              this.navController.setRoot(AccueilPage );
+              this.navController.setRoot(TabsPage );
             //console.log(this.loginService.getInfosActeur());
           }
           else{

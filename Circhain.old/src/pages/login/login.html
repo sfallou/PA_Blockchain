@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Login </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <form [formGroup]="acteur" (ngSubmit)="loginForm()">
+    <ion-item>
+      <ion-label>Identifiant</ion-label>
+      <ion-input type="text" formControlName="id"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Mot de passe</ion-label>
+      <ion-input type="password" formControlName="mdp"></ion-input>
+    </ion-item>
+    <button ion-button type="submit" [disabled]="!acteur.valid">Submit</button>
+  </form>
+
+</ion-content>

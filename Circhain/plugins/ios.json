@@ -24,26 +24,7 @@
         },
         "ionic-plugin-keyboard": {
             "PACKAGE_NAME": "io.ionic.starter"
-        },
-        "cordova-plugin-http": {
-            "PACKAGE_NAME": "io.ionic.starter"
-        },
-        "phonegap-nfc": {
-            "PACKAGE_NAME": "com.ionicframework.circhain762617"
-        },
-        "cordova-plugin-barcodescanner": {
-            "PACKAGE_NAME": "com.ionicframework.circhain762617"
-        },
-        "cordova-plugin-vibration": {
-            "PACKAGE_NAME": "com.ionicframework.circhain762617"
         }
     },
-    "dependent_plugins": {
-        "cordova-plugin-compat": {
-            "PACKAGE_NAME": "io.ionic.starter"
-        },
-        "cordova-plugin-file": {
-            "PACKAGE_NAME": "io.ionic.starter"
-        }
-    }
+    "dependent_plugins": {}
 }
