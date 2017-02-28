@@ -1,5 +1,340 @@
 <?php
  
+    /*
+    * Classe Acteur
+    **/
+class Acteur{
+    private $id_acteur;
+    private $nom; 
+    private $prenom; 
+    private $email; 
+    private $mdp;
+    private $adresse;
+    private $profil;
+    private $tel;  
+    private $mes_cartes; 
+    private $mes_notifications;
+    private $bdd; 
+
+
+    function __construct($id_acteur, $nom, $prenom, $email, $mdp, $profil, $adresse, $tel){
+        $this->id_acteur=$id_acteur;
+        $this->mdp=$mdp;
+        $this->profil=$profil;
+        $this->nom=$nom;
+        $this->prenom=$prenom;
+        $this->email=$email;
+        $this->adresse=$adresse;
+        $this->tel=$tel;
+        // On deinit l'objet $bdd qui represente la base de donnée
+        try {
+            $this->bdd=new PDO('mysql:host=localhost;dbname=circhain;charset=utf8','root','passer');
+            $this->bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        }
+        catch (Exception $e){
+            $this->bdd = Null;
+            die ("erreur connexion:".$e->getMessage() );
+        }
+    }
+    /*function set_id($id){
+        $this->id_acteur=$id;
+    
+    }
+    
+    function set_mdp($mdp){
+        $this->mdp=$mdp;
+    }
+    */
+
+    function existe_acteur(){
+        $req=$this->bdd->prepare('select * from Acteurs where id_acteur=:n1');
+        $req->execute(array(
+            ':n1'=>$this->id_acteur
+        ));
+        if($req->fetch()['nom_acteur']!=NULL)
+            return 1;
+        else
+            return 0;
+    }
+    
+    function creer_acteur(){
+        if(!$this->existe_acteur()){
+        $req=$this->bdd->prepare("INSERT INTO Acteurs(id_acteur, nom_acteur, prenom_acteur, email_acteur, adresse_acteur, tel_acteur, profil, timestamp, mdp) VALUES (:n1, :n2, :n3, :n4, :n5, :n6, :n7, :n8, :n9)");
+        $res=$req->execute(array(
+            ':n1'=>$this->id_acteur,
+             ':n2'=>$this->nom, 
+             ':n3'=>$this->prenom, 
+             ':n4'=>$this->email,
+             ':n5'=>$this->adresse,
+             ':n6'=>$this->tel,
+             ':n7'=>$this->profil,
+             ':n8'=>time(),
+             ':n9'=>$this->mdp
+        ));
+            if($res)
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+    
+    function get_id(){
+        $req=$this->bdd->prepare('select * from Acteurs where nom_acteur=:n1 and prenom_acteur=:n2 and mdp=:n3');
+        $req->execute(array(
+            ':n1'=>$this->nom,
+            ':n2'=>$this->prenom,
+            ':n3'=>$this->mdp
+        ));
+        $donnees=$req->fetch();
+        return $donnees['id_acteur'];
+    }
+    /*
+    function supprimer_acteur(){
+        $req=$this->bdd->prepare("DELETE * FROM Acteurs where id_acteur=:n1");
+        $req->execute(array(':n1'=>$this->id_acteur));
+    }
+    */
+    // Fonction static qui permet d'avoir les infos d'un acteur sans instancier un objet
+    static function infos_acteur($id){
+        // On deinit l'objet $bdd qui represente la base de donnée
+        try {
+            $bdd=new PDO('mysql:host=localhost;dbname=circhain;charset=utf8','root','passer');
+            $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        }
+        catch (Exception $e){
+            $bdd = Null;
+            die ("erreur connexion:".$e->getMessage() );
+        }
+        $req=$bdd->prepare('select * from Acteurs where id_acteur=:n1');
+        $req->execute(array(
+            ':n1'=>$id
+        ));
+        $data =array();
+        while($donnes=$req->fetch()){
+                    $data['id_acteur']=$donnes['id_acteur'];
+                    $data['nom']=$donnes['nom_acteur'];
+                    $data['prenom']=$donnes['prenom_acteur'];
+                    $data['email']=$donnes['email_acteur'];
+                    $data['mdp']=$donnes['mdp'];
+                    $data['adresse']=$donnes['adresse_acteur'];
+                    $data['tel']=$donnes['tel_acteur'];
+                    $data['profil']=$donnes['profil'];
+            }
+            return $data;
+    }
+
+    // Fonction authentification
+    function authentifier_acteur(){
+        if ($this->existe_acteur())
+            return true;
+        else
+            return false;
+    }
+    // Fonction creer_carte ( utiliser uniquement pour cirly)
+    function creer_carte($id_carte){
+        if ($this->existe_acteur()){
+            // On enregistre la carte dans la table Cartes
+            $req=$this->bdd->prepare("INSERT INTO Cartes(id_carte, proprietaire_actu, etat_carte, date_creation,timestamp) VALUES (:n1, :n2, :n3, :n4, :n5)");
+            $res=$req->execute(array(
+            ':n1'=>$id_carte,
+            ':n2'=>$this->id_acteur,
+             ':n3'=>"en fabrication", 
+             ':n4'=>date("Y-m-d H:i:s"), 
+             ':n5'=>time()
+            ));
+            if ($res)
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+    // Fonction envoyer_carte 
+    function envoyer_carte($id_destinataire,$id_carte){
+        if ($this->existe_acteur()){
+            // on va récuperer les infos de la carte
+            $req=$this->bdd->prepare('select * from Cartes where id_carte=:n1');
+            $req->execute(array(
+                ':n1'=>$id_carte
+            ));
+            $id=NULL;
+            while ($donnes=$req->fetch()) {
+                    $id=$donnes['id_carte'];
+                    $proprietaire_actu=$donnes['proprietaire_actu'];
+                    $etat_carte=$donnes['etat_carte'];
+                    $date_creation=$donnes['etat_carte'];
+                }
+            if($id==NULL){
+                return "cette carte n'existe pas";
+            }
+            // On modifie la table Cartes
+            //return var_dump($this->id_acteur,'-',$proprietaire_actu);
+            if($this->id_acteur==$proprietaire_actu and $etat_carte!="en transit"){
+                $req=$this->bdd->prepare("UPDATE Cartes SET proprietaire_actu=:n1, etat_carte=:n2, timestamp=:n3 WHERE id_carte=:n4");
+                $req->execute(array(
+                ':n1'=>$id_destinataire,
+                ':n2'=>"en transit", 
+                ':n3'=>time(),
+                ':n4'=>$id_carte
+                ));
+
+                // On enregistre la transaction dans la table Acteur_Carte
+            $req=$this->bdd->prepare("INSERT INTO Acteurs_Cartes(id_proprietaire_actu, id_proprietaire_prec, id_carte, date_emis, date_recu, timestamp) VALUES (:n1, :n2, :n3, :n4, :n5, :n6)");
+            $res2=$req->execute(array(
+            ':n1'=>$id_destinataire,
+            ':n2'=>$this->id_acteur,
+             ':n3'=>$id_carte, 
+             ':n4'=>date("Y-m-d H:i:s"), 
+             ':n5'=>Null,
+             ':n6'=>time()
+            ));
+            return true;
+
+            }
+            else
+                return "cette carte ne vous appartient plus";
+
+        }
+        else
+            return false;
+    }
+    // Fonction scanner_carte 
+    function scanner_carte($id_carte){
+        if ($this->existe_acteur()){
+            // On verifie si l'acteur a le droit de recevoir la carte ou pas
+            $req=$this->bdd->prepare('select * from Acteurs_Cartes where id_carte=:n1 and id_proprietaire_actu=:n2');
+            $req->execute(array(
+                ':n1'=>$id_carte,
+                ':n2'=>$this->id_acteur,
+            ));
+            $id=NULL;
+            while ($donnes=$req->fetch()) {
+                    $date_recu=$donnes['date_recu'];
+                    $id=$donnes['id_carte'];
+                }
+            // Si vrai, on modifie les tables Cartes, Acteurs_Cartes 
+            // et on envoie l'historique de la carte
+            if($id!=NULL){ //Il a le droit de lire la carte
+                //return var_dump($date_recu);
+                if($date_recu==NULL){  // on verifie si c'est le premier scan et si oui
+                    // On modifie Acteurs_Cartes (date_reçue)
+                    $req2=$this->bdd->prepare("UPDATE Acteurs_Cartes SET date_recu=:n1 WHERE id_carte=:n2 and id_proprietaire_actu=:n3");
+                    $req2->execute(array(
+                    ':n1'=>date("Y-m-d H:i:s"),
+                    ':n2'=>$id_carte,
+                    ':n3'=>$this->id_acteur
+                    ));
+                    // On modifie la table Cartes (etat_carte= en transit)
+                    $req=$this->bdd->prepare("UPDATE Cartes SET etat_carte=:n1 WHERE id_carte=:n2");
+                    $req->execute(array(
+                    ':n1'=>"reçue",
+                    ':n2'=>$id_carte
+                    ));
+                    
+                }
+                // Ensuite on récupère les infos dans la table Cartes
+    
+                $req3=$this->bdd->prepare('select * from Cartes where id_carte=:n1');
+                $req3->execute(array(
+                ':n1'=>$id_carte,
+                ));
+                while($donnees=$req3->fetch()){
+                    $proprietaire_actuel=$donnees['proprietaire_actu'];
+                    $date_creation=$donnees['date_creation'];
+                    $etat_carte = $donnees['etat_carte'];
+                }
+                
+                // On envoie l'historique de la carte
+                $histoiques=array();
+                $req=$this->bdd->prepare('select * from Acteurs_Cartes where id_carte=:n1');
+                $req->execute(array(
+                ':n1'=>$id_carte,
+                ));
+                while($donnes=$req->fetch()){
+                    $prop_actu=$donnes['id_proprietaire_actu'];
+                    $prop_prec=$donnes['id_proprietaire_prec'];
+                    $date_emis = $donnes['date_emis'];
+                    $date_recu = $donnes['date_recu'];
+                    $histoiques[]=array('prop_actu'=>$prop_actu,'prop_prec'=>$prop_prec,'date_emis'=>$date_emis,'date_recu'=>$date_recu);
+                }
+                return array(
+                        'id_carte'=>$id_carte,
+                        'date_creation'=>$date_creation,
+                        'etat_carte'=>$etat_carte,
+                        'proprietaire_actuel'=>$proprietaire_actuel,
+                        'histoique'=>$histoiques
+                    );
+
+            }
+            else
+                return "vous ne pouvez pas lire cette carte";
+        }
+        else
+            return false;
+    }
+
+    // Fonction mes_cartes 
+    function mes_cartes(){
+        if ($this->existe_acteur()){
+            $req=$this->bdd->prepare('select * from Acteurs_Cartes where id_proprietaire_actu=:n1 or id_proprietaire_prec=:n1 ');
+            $req->execute(array(
+                ':n1'=>$this->id_acteur,
+            ));
+            $data=array();
+            while ($donnes=$req->fetch()) {
+                    $data[]=array('id_carte'=>$donnes['id_carte']);
+            }
+            return $data;
+        }
+        else
+            return false;
+    }
+    // Fonction static qui permet d'avoir la listes des acteurs
+    static function les_acteurs(){
+        // On deinit l'objet $bdd qui represente la base de donnée
+        try {
+            $bdd=new PDO('mysql:host=localhost;dbname=circhain;charset=utf8','root','passer');
+            $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        }
+        catch (Exception $e){
+            $bdd = Null;
+            die ("erreur connexion:".$e->getMessage() );
+        }
+        $req=$bdd->query('select * from Acteurs');
+        $data =array();
+
+        while($donnes=$req->fetch()){
+                    $id_acteur=$donnes['id_acteur'];
+                    $nom=$donnes['nom_acteur'];
+                    $prenom=$donnes['prenom_acteur'];
+                    $email=$donnes['email_acteur'];
+                    $mdp=$donnes['mdp'];
+                    $adresse=$donnes['adresse_acteur'];
+                    $tel=$donnes['tel_acteur'];
+                    $profil=$donnes['profil'];
+                    $data[]=array(
+                        'id_acteur'=>$id_acteur,
+                        'nom_acteur'=>$nom,
+                        'prenom_acteur'=>$prenom,
+                        'email_acteur'=>$email,
+                        'mdp'=>$mdp,
+                        'adresse_acteur'=>$adresse,
+                        '$tel'=>$tel,
+                        'profil'=>$profil
+                        );
+        }
+        return $data;
+    }
+
+
+}
+/************************************************/
+/* Début phalcon
+/************************************************/
+
 use Phalcon\Loader;
 use Phalcon\Mvc\Micro;
 use Phalcon\DI\FactoryDefault;
@@ -12,7 +347,7 @@ $loader = new Loader();
 $loader->registerDirs(
     array(
         __DIR__ . '/models/',
-        __DIR__ . '/Formulaire/'
+        __DIR__ . '/Demo/'
     )
 )->register();
 
@@ -24,80 +359,53 @@ $di->set('db', function () {
         "host" => "localhost",
         "username" => "root",
         "password" => "passer",
-        "dbname"   => "challenge2017",
+        "dbname"   => "circhain",
         "options" => array(
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
         )
     ));
     
 });
-/// je définis une fonction pour encoder et envoyer une image////
-function EncoderImage($path){
-$path=substr($path,1);
-$path="Formulaire/$path";
-$type = pathinfo($path, PATHINFO_EXTENSION);
-$data = file_get_contents($path);
-$base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-return $base64;
-}
-///// je définis une fonction qui me sera utile ////////
-function unique_multidim_array($array, $key) { 
-    $temp_array = array(); 
-    $i = 0; 
-    $key_array = array(); 
-    
-    foreach($array as $val) { 
-        if (!in_array($val[$key], $key_array)) { 
-            $key_array[$i] = $val[$key]; 
-            $temp_array[$i] = $val; 
-        } 
-        $i++; 
-    } 
-    return $temp_array; 
-} 
+
 // Create and bind the DI to the application
 $app = new Micro($di);
 
 ////////////////////////////////////////////////////////////////
 /////////////////////                             //////////////
-//////////////////// Section Utilisateurs (Users) ///////////// 
+//////////////////// Section Utilisateurs (Acteurs) /////////// 
 ///////////////////                               /////////////
 //////////////////////////////////////////////////////////////                            
 
 
-// ajouter un nouvel user
-$app->post('/api/user', function () use ($app) {
+// ajouter un nouvel acteur
+$app->post('/api/acteur', function () use ($app) {
     
-    $user = $app->request->getJsonRawBody();
-    var_dump($user);
-    /*$phql = "INSERT INTO Users (id, login, mdp,mail,nom,profil,etat,credit) VALUES (:id:, :login:, :mdp:, :mail:, :nom:, :profil:, :etat:, :credit:)";
+    // On récupère les infos en json qu'on traduit en objet php
+    $acteur = $app->request->getJsonRawBody();
 
-    $status = $app->modelsManager->executeQuery($phql, array(
-        'id' => $user->id,
-	'login' => $user->login,
-        'mdp' => sha1($user->mdp),
-	'mail' => $user->mail,
-        'nom' => $user->nom,
-        'profil' => $user->profil,
-        'etat' => $user->etat,
-	'credit' => $user->credit
-    ));
-
-    // Create a response
+    $id_acteur =$acteur->id_acteur;
+    $nom =$acteur->nom_acteur;
+    $prenom=$acteur->prenom_acteur;
+    $email=$acteur->email_acteur;
+    $mdp =sha1($acteur->mdp);
+    $profil=$acteur->profil;
+    $adresse =$acteur->adresse;
+    $tel=$acteur->tel;
+    // On va instancier un objet de la classe Acteur
+    $new_acteur = new Acteur($id_acteur, $nom, $prenom, $email, $mdp, $profil, $adresse, $tel);
+    $bool = $new_acteur->creer_acteur();
+    // On crée la  response à renvoyer  
     $response = new Response();
 
-    // Check if the insertion was successful
-    if ($status->success() == true) {
+    // On verifie si la creation s'est bien passé ou pas
+    if ($bool) {
 
         // Change the HTTP status
         $response->setStatusCode(201, "Created");
-
-        $user->id = $status->getModel()->id;
-
         $response->setJsonContent(
             array(
                 'status' => 'OK',
-                'data'   => $user
+                'data'   => $acteur
             )
         );
 
@@ -107,10 +415,7 @@ $app->post('/api/user', function () use ($app) {
         $response->setStatusCode(409, "Conflict");
 
         // Send errors to the client
-        $errors = array();
-        foreach ($status->getMessages() as $message) {
-            $errors[] = $message->getMessage();
-        }
+        $errors = " Impossible de créer l'acteur, veuillez contacter l'administrateur ";
 
         $response->setJsonContent(
             array(
@@ -120,834 +425,273 @@ $app->post('/api/user', function () use ($app) {
         );
     }
 
-    return $response;*/
+    return $response;
 });
 
-// Récupere tous les utilisateurs
-$app->get('/api/users', function () use ($app) {
+// Récupere tous les  acteurs
+$app->get('/api/acteurs', function () use ($app) {
 
-    $phql = "SELECT * FROM Users ORDER BY id";
-    $users = $app->modelsManager->executeQuery($phql);
+    $acteurs = Acteur::les_acteurs();
     // Create a response
     $response = new Response();
     // Change the HTTP status
     $response->setStatusCode(200, "OK");
 
-    $data = array();
-    foreach ($users as $user) {
-        $data[] = array(
-            'login'   => $user->login,
-            'mdp' => $user->mdp,
-            'nom' => $user->nom,
-            'profil' => $user->profil,
-            'etat' => $user->etat
-        );
-    }
     $response->setJsonContent(
             array(
                 'status'   => 'OK',
-                'data' => $data
+                'data' => $acteurs
             )
         );
     return $response;
 });
 
-$app->post('/api/users/creation/{loginmdpmail}', function ($loginmdpmail) use ($app) {
-    $req = explode("-", $loginmdpmail);
-    $login=$req['0'];
-    $mdp=sha1($req['1']);
-    $mail=$req['2'];
-
-    $phql = "INSERT INTO Users VALUES (:id:,:login:,:mdp:,:mail:,:nom:,:profil:,:etat:,:credit:)";
-
-    $test_mail = "SELECT count(*) AS nb_rslt FROM Users WHERE mail=:mail:";
-    $test_login = "SELECT count(*) AS nb_rslt FROM Users WHERE login=:login:";
-
-    $rslt_mail = $app->modelsManager->executeQuery($test_mail, array(
-        'mail' => $mail
-    ))->getFirst();
-    $rslt_login = $app->modelsManager->executeQuery($test_login,array(
-        'login' => $login
-    ))->getFirst();
-
+///////// Récupère user à partir de son id //////////////////
+$app->post('/api/acteur', function () use ($app) { 
+    // On récupère les infos en json qu'on traduit en objet php
+    $infos_envoi = $app->request->getJsonRawBody();
+    $id_acteur =$infos_envoi->id_acteur;
+    // On crée la  response à renvoyer  
     $response = new Response();
-
-    $val_mail = $rslt_mail->nb_rslt;
-    $val_login = $rslt_login->nb_rslt;
-
-    if ($val_mail <> 0) {
+    //On récupères les données de l'acteur
+    $acteur = Acteur::infos_acteur($id_acteur);
+    if(count($acteur)>0){
+        // Change the HTTP status
+        $response->setStatusCode(201, "Created");
         $response->setJsonContent(
             array(
-                'data' => "Ce mail est déjà utilisé."
+                'status' => 'OK',
+                'data'   => $acteur
             )
         );
-    } elseif ($val_login <> 0) {
+    }
+    else{
+        // Change the HTTP status
+        $response->setStatusCode(409, "Conflict");
+        // Send errors to the client
+        $errors = " Erreur, cette identifiant n'existe pas dans la blockchain";
         $response->setJsonContent(
             array(
-                'data' => "Ce login est déjà utilisé."
+                'status'   => 'ERROR',
+                'data' => $errors
             )
         );
-    } else {
-        $status = $app->modelsManager->executeQuery($phql, array(
-        'id' => 0,
-        'login' => $login,
-        'mdp' => $mdp,
-        'mail' => $mail,
-        'nom' => $login,
-        'profil' => 'Participant',
-        'etat' => 1,
-        'credit' => 0
-        ));
 
-        // Check if the insertion was successful
-        if ($status->success() == true) {
+    }
+    return $response;
+});
 
+// Authentifier acteur avec son id et son mdp et renvoyer ses données
+$app->post('/api/acteur/auth', function () use ($app) {
+    
+    // On récupère les infos en json qu'on traduit en objet php
+    $infos_envoi = $app->request->getJsonRawBody();
+    $id_acteur =$infos_envoi->id_acteur;
+    $mdp =sha1($infos_envoi->mdp);
+    // On crée la  response à renvoyer  
+    $response = new Response();
+    //On récupères les données de l'acteur
+    $acteur = Acteur::infos_acteur($id_acteur);
+    if(count($acteur)>0 and $mdp==$acteur['mdp']){
+        // Change the HTTP status
+        $response->setStatusCode(201, "Created");
+        $response->setJsonContent(
+            array(
+                'status' => 'OK',
+                'data'   => $acteur
+            )
+        );
+    }
+    else{
+        // Change the HTTP status
+        $response->setStatusCode(409, "Conflict");
+        // Send errors to the client
+        $errors = " Erreur, cette identifiant n'existe pas dans la blockchain ";
+        $response->setJsonContent(
+            array(
+                'status'   => 'ERROR',
+                'data' => $errors
+            )
+        );
+
+    }
+    return $response;
+});
+
+
+// ajouter une nouvelle carte
+$app->post('/api/cirly/creer/carte', function () use ($app) {
+    
+    // On récupère les infos en json qu'on traduit en objet php
+    $infos = $app->request->getJsonRawBody();
+
+    $id_acteur =$infos->id_acteur;
+    $id_carte =$infos->id_carte;
+    // On crée la  response à renvoyer  
+    $response = new Response();
+    //On récupères les données de l'acteur
+    $acteur = Acteur::infos_acteur($id_acteur);
+    // on verifie si c'est cirly ou pas
+    if(count($acteur) and $acteur['profil']=="administrateur"){
+        // On va instancier un objet de la classe Acteur
+        $new_acteur = new Acteur($id_acteur,$acteur['nom'],$acteur['prenom'],$acteur['email'],$acteur['mdp'],$acteur['profil'],$acteur['adresse'],$acteur['tel']);
+        $bool=$new_acteur->creer_carte($id_carte);
+        if($bool){
             // Change the HTTP status
             $response->setStatusCode(201, "Created");
-
-            //$user->id = $status->getModel()->id;
-            $var = "$login&$mdp";
             $response->setJsonContent(
-                array(
-                    'status' => 'OK',
-                    'data'   => $var
+            array(
+                'status' => 'OK',
+                'data'   => $id_carte
                 )
             );
-
-        } else {
-
+        }
+        else{
             // Change the HTTP status
             $response->setStatusCode(409, "Conflict");
-
             // Send errors to the client
-            $errors = array();
-            foreach ($status->getMessages() as $message) {
-                $errors[] = $message->getMessage();
-            }
-
+            $errors = " Impossible de créer la carte";
             $response->setJsonContent(
-                array(
-                    'status'   => 'ERROR',
-                    'data' => $errors
-                )
-            );
-        }
-    }
-
-    return $response;
-});
-
-///////// Récupère user à partir de son login et mdp //////////////////
-$app->get('/api/users/{loginmdp}', function ($loginmdp) use ($app) {
-    //on récupere les choix contenus dans la requête
-    $req = explode("-", $loginmdp);
-    $login=$req['0'];
-    $mdp=sha1($req['1']);
-
-    $phql = "SELECT * FROM Users WHERE login = :login: AND mdp=:mdp:";
-    $user = $app->modelsManager->executeQuery($phql, array(
-        'login' => $login,
-        'mdp' => $mdp
-    ))->getFirst();
-
-    // Create a response
-    $response = new Response();
-
-    if ($user == false) {
-        $response->setJsonContent(
-            array(
-                'status' => 'NOT-FOUND'
-            )
-        );
-    } else {
-        $response->setJsonContent(
-            array(
-                'status' => 'FOUND',
-                'data'   => array(
-                    'id'   => $user->id,
-                    'login' => $user->login,
-                    'mdp' => $user->mdp,
-                    'nom' => $user->nom,
-                    'profil' => $user->profil,
-                    'etat' => $user->etat
-                )
-            )
-        );
-    }
-
-    return $response;
-});
-
-/////////// Mettre à jour un user baser sur son id ///////////////
-$app->put('/api/users/{id:[0-9]+}', function ($id) use ($app) {
-
-    $user = $app->request->getJsonRawBody();
-
-    $phql = "UPDATE Users SET login = :login:, mdp = :mdp:, nom = :nom:, profil = :profil:, etat = :etat: WHERE id = :id:";
-    $status = $app->modelsManager->executeQuery($phql, array(
-            'id'   => $id,
-            'login' => $user->login,
-            'mdp' => sha1($user->mdp),
-            'nom' => $user->nom,
-            'profil' => $user->profil,
-            'etat' => $user->etat
-    ));
-
-    // Create a response
-    $response = new Response();
-
-    // Check if the insertion was successful
-    if ($status->success() == true) {
-        $response->setJsonContent(
-            array(
-                'status' => 'OK',
-                'data'=>'ok'
-            )
-        );
-    } else {
-
-        // Change the HTTP status
-        $response->setStatusCode(409, "Conflict");
-
-        $errors = array();
-        foreach ($status->getMessages() as $message) {
-            $errors[] = $message->getMessage();
-        }
-
-        $response->setJsonContent(
             array(
                 'status'   => 'ERROR',
                 'data' => $errors
-            )
-        );
-    }
+                )
+            );
 
-    return $response;
-});
-
-
-///// Supprime user à partir de son id
-$app->delete('/api/users/{id:[0-9]+}', function ($id) use ($app) {
-
-    $phql = "DELETE FROM Users WHERE id = :id:";
-    $status = $app->modelsManager->executeQuery($phql, array(
-        'id' => $id
-    ));
-
-    // Create a response
-    $response = new Response();
-
-    if ($status->success() == true) {
-        $response->setJsonContent(
-            array(
-                'status' => 'OK',
-                'data'=>'ok'
-            )
-        );
-    } else {
-
-        // Change the HTTP status
-        $response->setStatusCode(409, "Conflict");
-
-        $errors = array();
-        foreach ($status->getMessages() as $message) {
-            $errors[] = $message->getMessage();
         }
-
-        $response->setJsonContent(
+    }
+    else{
+        // Change the HTTP status
+            $response->setStatusCode(409, "Conflict");
+            // Send errors to the client
+            $errors = " Erreur, cette identifiant n'existe pas dans la blockchain";
+            $response->setJsonContent(
             array(
                 'status'   => 'ERROR',
                 'data' => $errors
-            )
-        );
-    }
-
-    return $response;
-});
-
-/////////////////////// Fin de la section User /////////////////////
-
-////////////////////////////////////////////////////////////////
-/////////////////////                             //////////////
-////////////////////     Section Ecoles           ///////////// 
-///////////////////                               /////////////
-////////////////////////////////////////////////////////////// 
-
-
-// Récupere toutes les écoles
-$app->get('/api/ecoles', function () use ($app) {
-
-    $phql = "SELECT * FROM Ecoles ORDER BY id_ecole";
-    $ecoles = $app->modelsManager->executeQuery($phql);
-    $response=new Response();
-    $response->setStatusCode(200, "OK");
-    $data = array();
-    foreach ($ecoles as $ecole) {
-        $data[] = array(
-            'id_ecole' => $ecole->id_ecole,
-            'nom_ecole'   => $ecole->nom_ecole,
-            'abreviation' => $ecole->abreviation,
-            'points' => $ecole->points,
-            'etat_ecole' => $ecole->etat_ecole,
-            'logo_ecole' => "http://challenge-2016.eclair.ec-lyon.fr/Formulaire".substr($ecole->logo_ecole,1).""
+                )
             );
     }
-    $response->setJsonContent(
-            array(
-                'status'   => 'OK',
-                'data' => $data
-            )
-        );
     return $response;
 });
-
-///////// Récupère l'école et ses matchs à partir de son abreviation //////////////////
-$app->get('/api/ecoles/{abreviation}', function ($abreviation) use ($app) {
-    //on récupère les information de l'école concernée
-    $phql = "SELECT * FROM Ecoles WHERE abreviation = :abreviation:";
-    $ecole = $app->modelsManager->executeQuery($phql, array(
-        'abreviation' => $abreviation
-    ))->getFirst();
-
-    // Create a response
-    $response = new Response();
-
-    if ($ecole == false) {
-        $response->setJsonContent(
-            array(
-                'status' => 'NOT-FOUND'
-            )
-        );
-    } 
-    // on va récupérer l'id de l'école puis aller chercher dans la table Equipes l'ensemble des équipes de l'école
-    else {
-        
-        $id_ecole=$ecole->id_ecole;
-        $phql2 = "SELECT * FROM Equipes WHERE id_ecole=:id_ecole: ORDER BY id_equipe";
-        $equipes_ecoles = $app->modelsManager->executeQuery($phql2, array(
-            'id_ecole' => $id_ecole));
-        $data = array();
-        $listedesmatchs=array();
-        //pour chaque équipe on cherche ses matchs dans la table match.
-        foreach ($equipes_ecoles as $equipe) {
-            $nom_equipe = $equipe->nom_equipe;
-            $phql3 = "SELECT * FROM Matchs WHERE equipe1=:nom_equipe: OR equipe2=:nom_equipe: ORDER BY id_match";
-            $matchs_ecole = $app->modelsManager->executeQuery($phql3, array(
-            'nom_equipe' => $nom_equipe));
-            foreach ($matchs_ecole as $match) {
-             $listedesmatchs[]=array(
-                'id_match' => $match->id_match,
-                'sport'   => $match->sport,
-                'equipe1' => $match->equipe1,
-                'equipe2' => $match->equipe2,
-                'date_match' => $match->date_match,
-                'heure_match' => $match->heure_match,
-                'lieu_match' => $match->lieu,
-                'score1' => $match->score1,
-                'score2' => $match->score2,
-                'phase_match' => $match->phase,
-                'etat_match' => $match->etat,
-                'poule' => $match->poule
-                );
-                }
-        }
-        
-       $response->setJsonContent(
-            array(
-                'status' => 'FOUND',
-                'data'   => array(
-                    'id_ecole'   => $ecole->id_ecole,
-                    'nom_ecole' => $ecole->nom_ecole,
-                    'abreviation' => $ecole->abreviation,
-                    'points' => $ecole->points,
-                    'etat_ecole' => $ecole->etat_ecole,
-                    'logo_ecole' => EncoderImage($ecole->logo_ecole),
-                    'matchs' =>$listedesmatchs
-                )
-            )
-        );
-        
-        
-    }
-
-    return $response;
-});
-
-///// Récupere toutes les écoles par ordre de classement (1er au dernier) /////
-$app->get('/api/ecoles/classement', function () use ($app) {
-
-    $phql = "SELECT * FROM Ecoles ORDER BY points DESC";
-    $ecoles = $app->modelsManager->executeQuery($phql);
-    $response=new Response();
-    $response->setStatusCode(200, "OK");
-    $data = array();
-    foreach ($ecoles as $ecole) {
-        if($ecole->points > 0){
-        $data[] = array(
-            'id_ecole' => $ecole->id_ecole,
-            'nom_ecole'   => $ecole->nom_ecole,
-            'abreviation' => $ecole->abreviation,
-            'points' => $ecole->points,
-            'logo_ecole' => "http://challenge-2016.eclair.ec-lyon.fr/Formulaire".substr($ecole->logo_ecole,1)."",
-            'etat_ecole' => $ecole->etat_ecole
-            );
-        }
-    }
-    $response->setJsonContent(
-            array(
-                'status'   => 'OK',
-                'data' => $data
-            )
-        );
-    return $response;
-});
-/////////////////////// Fin de la section Ecoles /////////////////////
-
-////////////////////////////////////////////////////////////////
-/////////////////////                             //////////////
-////////////////////     Section Matchs           ///////////// 
-///////////////////                               /////////////
-////////////////////////////////////////////////////////////// 
-
-
-
-///////// Récupère les matchs à partir des choix effectues //////////////////
-$app->get('/api/matchs/{requete}', function ($requete) use ($app) {
-    //on récupere les choix contenus dans la requête
-    $req = explode("-", $requete);
-    $sport=$req['0'];
-    $sexe=$req['1'];
-    //on definit le tableau contenant les matchs normaux
-    $sportNormaux=array("Football","Basketball","Handball","Rugby","Volley");
-
-    //on récupère les matchs du sport et du genre concernés dans la bdd
-    $phql2 = "SELECT DISTINCT * FROM Equipes WHERE type_sport=:type_sport: AND type_equipe=:type_equipe: ORDER BY id_equipe";
-    $equipes_seleted = $app->modelsManager->executeQuery($phql2, array(
-         'type_sport' => $sport,
-         'type_equipe' => $sexe));
-    // Create a response
-    $response = new Response();
-
-    if ($equipes_seleted == false) {
-        $response->setJsonContent(
-            array(
-                'status' => 'NOT-FOUND'
-            )
-        );
-    } 
-    else{
-    $data = array();
-    $listeEquipes=array();
-    $matchs_trouves=array();
-     //on verifie si le sport est normal
-    if(in_array($sport, $sportNormaux)){
-        //pour chaque équipe on cherche ses matchs dans la table match.
-        foreach ($equipes_seleted as $equipe) {
-            $listeEquipes[]=array(
-                'equipe'=> $equipe->nom_equipe,
-                'equipeTronq'=> explode(" ", $equipe->nom_equipe)[0],);
-            $nom_equipe = $equipe->nom_equipe;
-            $phql3 = "SELECT * FROM Matchs WHERE equipe1=:nom_equipe: OR equipe2=:nom_equipe: ORDER BY id_match";
-            $matchs_selected = $app->modelsManager->executeQuery($phql3, array(
-            'nom_equipe' => $nom_equipe));
-        
-            foreach ($matchs_selected as $match) {
-             $matchs_trouves[]=array(
-                'id_match' => $match->id_match,
-                'sport'   => $match->sport,
-                'equipe1' => $match->equipe1,
-                'equipe2' => $match->equipe2,
-                'equipe1Tronq'=> explode(" ", $match->equipe1)[0],
-                'equipe2Tronq'=> explode(" ", $match->equipe2)[0],
-                'date_match' => $match->date_match,
-                'heure_match' => $match->heure_match,
-                'lieu_match' => $match->lieu,
-                'score1' => $match->score1,
-                'score2' => $match->score2,
-                'phase_match' => $match->phase,
-                'etat_match' => $match->etat,
-                'poule' => $match->poule
-                );
-        }
-
-        }
-        $matchs_trouves = array_values(unique_multidim_array($matchs_trouves,'id_match'));
-        $listeEquipes = array_values(unique_multidim_array($listeEquipes,'equipeTronq'));
-       $response->setJsonContent(
-            array(
-                'status' => 'FOUND',
-                'data'   => array(
-                    'sport'   => $sport,
-                    'genre' => $sexe,
-                    'equipes'=>$listeEquipes,
-                    'matchs' =>$matchs_trouves
-                )
-            )
-        );
-    }
-    else{
-        //pour chaque équipe on cherche ses matchs dans la table Matchs_special.
-        foreach ($equipes_seleted as $equipe) {
-            $listeEquipes[]=$equipe->nom_equipe;
-            $nom_equipe = $equipe->nom_equipe;
-            $sql = "SELECT * FROM MatchsSpecial WHERE equipe=:nom_equipe:  ORDER BY classement_equipe";
-            $matchs_special_selected = $app->modelsManager->executeQuery($sql, array(
-            'nom_equipe' => $nom_equipe));
-            foreach ($matchs_special_selected as $matchs_s) {
-                # code...
-                 $matchs_trouves[]=$matchs_s;
-            }
-           
-        }
-       $response->setJsonContent(
-            array(
-                'status' => 'FOUND',
-                'data'   => array(
-                    'sport'   => $sport,
-                    'genre' => $sexe,
-                    'equipes'=>$listeEquipes,
-                    'matchs' =>$matchs_trouves
-                )
-            )
-        );
-    }
-
-    }
-            return $response;
-});
-
-/////////// Mettre à jour les matchs normaux baser sur les donnees reçues ///////////////
-$app->post('/api/matchs/{donnees}', function ($donnees) use ($app) {
-    //on récupere les choix contenus dans la requête
-    $req = explode("-", $donnees);
-    if(count($req)==5){
-        $id_match=$req['0'];
-        $equipe1=$req['1'];
-        $equipe2=$req['2'];
-        $score1=$req['3'];
-        $score2=$req['4'];
-    }
-    else{
-        $id_match=$req['0'];
-        $score1=$req['1'];
-        $score2=$req['2'];
-    }
-
-   // $resultat = $app->request->getJsonRawBody();
-    $etat_match=1;
-    if($equipe1 && $equipe2){
-        $phql = "UPDATE Matchs SET equipe1 = :equipe1:, equipe2 = :equipe2:, score1 = :score1:, score2 = :score2:, etat = :etat_match:  WHERE id_match = :id_match:";
-        $status = $app->modelsManager->executeQuery($phql, array(
-            'id_match'   => $id_match,
-            'equipe1' => $equipe1,
-            'equipe2' => $equipe2,
-            'score1' => $score1,
-            'score2' => $score2,
-            'etat_match' => $etat_match
-    ));
-
-    }
-    else{
-    $phql = "UPDATE Matchs SET score1 = :score1:, score2 = :score2:, etat = :etat_match:  WHERE id_match = :id_match:";
-    $status = $app->modelsManager->executeQuery($phql, array(
-            'id_match'   => $id_match,
-            'score1' => $score1,
-            'score2' => $score2,
-            'etat_match' => $etat_match,
-    ));
-    }
-    // Create a response
-    $response = new Response();
-
-   // si la modification a reussi, on change le statue de la réponse à retourner
-    if ($status->success() == true) {
-        //on retourne que la requete est ok
-        $response->setJsonContent(
-            array(
-                'status' => 'OK',
-                'data'=>'ok'
-            )
-        );
-    } else {
-
-        // Change the HTTP status
-        $response->setStatusCode(409, "Conflict");
-
-        $errors = array();
-        foreach ($status->getMessages() as $message) {
-            $errors[] = $message->getMessage();
-        }
-
-        $response->setJsonContent(
-            array(
-                'status'   => 'ERROR',
-                'data' => $errors
-            )
-        );
-    }
-
-    return $response;
-});
-
-/////////// Mettre à jour le classement des matchs speciaux baser sur les donnees reçues ///////////////
-$app->post('/api/matchs/special/{donnees}', function ($donnees) use ($app) {
-    $req = explode("-", $donnees);
-    $id_match=$req['0'];
-    $classement=$req['1'];
-    //$resultat = $app->request->getJsonRawBody();
-    $etat_match=1;
-    //if($resultat)
-    $phql = "UPDATE MatchsSpecial SET classement_equipe = :classement: WHERE id_match_special = :id_match:";
-    $status = $app->modelsManager->executeQuery($phql, array(
-            'id_match'   => $id_match,
-            'classement' => $classement
-    ));
-
-    // Create a response
-    $response = new Response();
-
-    // si la modification a reussi, on change le statue de la réponse à retourner
-    if ($status->success() == true) {
+// envoyer une carte
+$app->post('/api/acteur/envoyer/carte', function () use ($app) {
     
-        //on retourne que la requete est ok
+    // On récupère les infos en json qu'on traduit en objet php
+    $infos_envoi = $app->request->getJsonRawBody();
+    $id_acteur =$infos_envoi->id_acteur;
+    $id_destinataire =$infos_envoi->id_destinataire;
+    $id_carte =$infos_envoi->id_carte;
+    // On crée la  response à renvoyer  
+    $response = new Response();
+    //On récupères les données de l'acteur
+    $acteur = Acteur::infos_acteur($id_acteur);
+    if(count($acteur)>0){
+        // On va instancier un objet de la classe Acteur
+        $new_acteur = new Acteur($id_acteur,$acteur['nom'],$acteur['prenom'],$acteur['email'],$acteur['mdp'],$acteur['profil'],$acteur['adresse'],$acteur['tel']);
+        $bool=$new_acteur->envoyer_carte($id_destinataire,$id_carte);
+        // Change the HTTP status
+        $response->setStatusCode(201, "Created");
         $response->setJsonContent(
             array(
                 'status' => 'OK',
-                'data'=>'ok'
+                'data'   => $bool
             )
         );
-    } else {
-
+    }
+    else{
         // Change the HTTP status
         $response->setStatusCode(409, "Conflict");
-
-        $errors = array();
-        foreach ($status->getMessages() as $message) {
-            $errors[] = $message->getMessage();
-        }
-
+        // Send errors to the client
+        $errors = " Erreur, cette identifiant n'existe pas dans la blockchain ";
         $response->setJsonContent(
             array(
                 'status'   => 'ERROR',
                 'data' => $errors
             )
         );
-    }
 
+    }
     return $response;
 });
 
-/////////////////////// Fin de la section Match /////////////////////
-
-////////////////////////////////////////////////////////////////
-/////////////////////                             //////////////
-////////////////////     Section Home             ///////////// 
-///////////////////                               /////////////
-////////////////////////////////////////////////////////////// 
-
-/////////////// Récuperation des informations de la page Home //////////
-
-$app->get('/api/home/infos', function () use ($app) {
-
-    $phql = "SELECT * FROM Infos ORDER BY id_info DESC";
-    $infos = $app->modelsManager->executeQuery($phql);
-    // Create a response
+// scanner une carte
+$app->post('/api/acteur/scanner/carte', function () use ($app) {
+    
+    // On récupère les infos en json qu'on traduit en objet php
+    $infos_envoi = $app->request->getJsonRawBody();
+    $id_acteur =$infos_envoi->id_acteur;
+    $id_carte =$infos_envoi->id_carte;
+    // On crée la  response à renvoyer  
     $response = new Response();
-    // Change the HTTP status
-    $response->setStatusCode(200, "OK");
-
-    $data = array();
-    foreach ($infos as $info) {
-        $data[] = array(
-            'id_info'   => $info->id_info,
-            'titre_info' => $info->titre,
-            'contenu_info' => $info->contenu,
-            'image_info' => "http://challenge-2016.eclair.ec-lyon.fr/Formulaire".substr($info->image_info,1)."" ,
-            'date_info' => $info->date_info,
-            'heure_info' => $info->heure_info
-            
-        );
-    }
-    $response->setContentType('application/json', 'UTF-8');
-    $response->setJsonContent(
+    //On récupères les données de l'acteur
+    $acteur = Acteur::infos_acteur($id_acteur);
+    if(count($acteur)>0){
+        // On va instancier un objet de la classe Acteur
+        $new_acteur = new Acteur($id_acteur,$acteur['nom'],$acteur['prenom'],$acteur['email'],$acteur['mdp'],$acteur['profil'],$acteur['adresse'],$acteur['tel']);
+        $bool=$new_acteur->scanner_carte($id_carte);
+        // Change the HTTP status
+        $response->setStatusCode(201, "Created");
+        $response->setJsonContent(
             array(
-                'status'   => 'OK',
-                'data' => $data
+                'status' => 'OK',
+                'data'   => $bool
             )
         );
+    }
+    else{
+        // Change the HTTP status
+        $response->setStatusCode(409, "Conflict");
+        // Send errors to the client
+        $errors = " Erreur, cette identifiant n'existe pas dans la blockchain";
+        $response->setJsonContent(
+            array(
+                'status'   => 'ERROR',
+                'data' => $errors
+            )
+        );
+
+    }
     return $response;
 });
 
-/////////////// Récuperation de photos galérie de la page galerie //////////
-
-$app->get('/api/home/galerie', function () use ($app) {
-
-    $phql = "SELECT * FROM Photos ORDER BY id_photo DESC";
-    $photos = $app->modelsManager->executeQuery($phql);
-    // Create a response
+// scanner une carte
+$app->post('/api/acteur/mes/cartes', function () use ($app) {
+    
+    // On récupère les infos en json qu'on traduit en objet php
+    $infos_envoi = $app->request->getJsonRawBody();
+    $id_acteur =$infos_envoi->id_acteur;
+    $mdp =$infos_envoi->mdp;
+    // On crée la  response à renvoyer  
     $response = new Response();
-    // Change the HTTP status
-    $response->setStatusCode(200, "OK");
-
-    $data = array();
-    foreach ($photos as $photo) {
-        $data[] = array(
-            'id_photo'   => $photo->id_photo,
-            'photo' => "http://challenge-2016.eclair.ec-lyon.fr/Formulaire".substr($photo->chemin,1)."" ,            
-        );
-    }
-    $response->setJsonContent(
+    //On récupères les données de l'acteur
+    $acteur = Acteur::infos_acteur($id_acteur);
+    if(count($acteur)>0 and $acteur['mdp']==$mdp){
+        // On va instancier un objet de la classe Acteur
+        $new_acteur = new Acteur($id_acteur,$acteur['nom'],$acteur['prenom'],$acteur['email'],$acteur['mdp'],$acteur['profil'],$acteur['adresse'],$acteur['tel']);
+        $bool=$new_acteur->mes_cartes();
+        // Change the HTTP status
+        $response->setStatusCode(201, "Created");
+        $response->setJsonContent(
             array(
-                'status'   => 'OK',
-                'data' => $data
+                'status' => 'OK',
+                'data'   => $bool
             )
         );
-    return $response;
-});
-
-/////////////// Récuperation des 3 derniers liens photos de la page home pour la galérie //////////
-
-$app->get('/api/home/galerie/liens', function () use ($app) {
-
-    $phql = "SELECT * FROM Photos ORDER BY id_photo DESC LIMIT 3";
-    $last_photos = $app->modelsManager->executeQuery($phql);
-    // Create a response
-    $response = new Response();
-    // Change the HTTP status
-    $response->setStatusCode(200, "OK");
-
-    $data = array();
-    foreach ($last_photos as $photo) {
-        $data[] = array(
-            'lien' => "http://challenge-2016.eclair.ec-lyon.fr/Formulaire".substr($photo->chemin,1).""            
-        );
     }
-    $response->setJsonContent(
+    else{
+        // Change the HTTP status
+        $response->setStatusCode(409, "Conflict");
+        // Send errors to the client
+        $errors = " Erreur, les infos fournis ne sont pas conformes";
+        $response->setJsonContent(
             array(
-                'status'   => 'OK',
-                'data' => $data
+                'status'   => 'ERROR',
+                'data' => $errors
             )
         );
-    return $response;
-});
-/////////////////////// Fin de la section Home /////////////////////
 
-////////////////////////////////////////////////////////////////
-/////////////////////                             //////////////
-////////////////////     Section Informations     ///////////// 
-///////////////////                               /////////////
-////////////////////////////////////////////////////////////// 
-
-/////////////// Récuperation le calendrier //////////
-
-$app->get('/api/informations/calendrier', function () use ($app) {
-
-    $phql = "SELECT * FROM Calendrier";
-    $calendriers = $app->modelsManager->executeQuery($phql);
-    // Create a response
-    $response = new Response();
-    // Change the HTTP status
-    $response->setStatusCode(200, "OK");
-
-    $data = array();
-    foreach ($calendriers as $photo) {
-        $data[] = array(
-            'calendrier' => "http://challenge-2016.eclair.ec-lyon.fr/Formulaire".substr($photo->chemin,1).""            
-        );
     }
-    $response->setJsonContent(
-            array(
-                'status'   => 'OK',
-                'data' => $data
-            )
-        );
-    return $response;
-});
-
-/////////////// Récuperation des plans  //////////
-
-$app->get('/api/informations/plan', function () use ($app) {
-
-    $phql = "SELECT * FROM Plans ORDER BY id_plan";
-    $plans = $app->modelsManager->executeQuery($phql);
-    // Create a response
-    $response = new Response();
-    // Change the HTTP status
-    $response->setStatusCode(200, "OK");
-
-    $data = array();
-    foreach ($plans as $photo) {
-        $data[] = array(
-            'plan' => "http://challenge-2016.eclair.ec-lyon.fr/Formulaire".substr($photo->chemin,1).""            
-        );
-    }
-    $response->setJsonContent(
-            array(
-                'status'   => 'OK',
-                'data' => $data
-            )
-        );
-    return $response;
-});
-
-/////////////// Récuperation des informations de la page urgence //////////
-
-$app->get('/api/informations/urgence', function () use ($app) {
-
-    $phql = "SELECT * FROM Urgences ";
-    $urgences = $app->modelsManager->executeQuery($phql);
-    // Create a response
-    $response = new Response();
-    // Change the HTTP status
-    $response->setStatusCode(200, "OK");
-
-    $data = array();
-    foreach ($urgences as $urgence) {
-        $data[] = array(
-            'id_urgence'   => $urgence->id_urgence,
-            'urgence' => $urgence->urgence,
-            'numero_tel' => $urgence->numeros_tel,
-            'detail_urgence' => $urgence->detail_urgence
-            
-        );
-    }
-    $response->setJsonContent(
-            array(
-                'status'   => 'OK',
-                'data' => $data
-            )
-        );
-    return $response;
-});
-
-/////////////// Récuperation des informations de la page FAQ //////////
-
-$app->get('/api/informations/faq', function () use ($app) {
-
-    $phql = "SELECT * FROM Faq ";
-    $faqs = $app->modelsManager->executeQuery($phql);
-    // Create a response
-    $response = new Response();
-    // Change the HTTP status
-    $response->setStatusCode(200, "OK");
-
-    $data = array();
-    foreach ($faqs as $faq) {
-        $data[] = array(
-            'id_question'   => $faq->id_question,
-            'titre'   => $faq->titre,
-            'question' => $faq->question,
-            'reponse' => $faq->reponse
-            
-        );
-    }
-    $response->setContentType('application/json', 'UTF-8');
-    $response->setJsonContent(
-            array(
-                'status'   => 'OK',
-                'data' => $data
-            )
-        );
     return $response;
 });
 
