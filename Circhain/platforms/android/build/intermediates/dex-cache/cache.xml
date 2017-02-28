@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/Users/sfallou/PA_Blockchain/Circhain/platforms/android/build/intermediates/exploded-aar/android/CordovaLib/unspecified/release/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="03ea17ffbc41fdabd0d6862a64ae5591eebeedc4">
+        <dex dex="/Users/sfallou/PA_Blockchain/Circhain/platforms/android/build/intermediates/pre-dexed/release/CordovaLib-unspecified-release_4b0aa48a5937640d41d481cc2364d69233974c9c.jar" />
+    </item>
+
+</items>
