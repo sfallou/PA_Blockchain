@@ -1,11 +1,13 @@
 import {Component} from '@angular/core';
 import {Validators, FormBuilder, FormGroup } from '@angular/forms';
-import {NavController, NavParams} from 'ionic-angular';
+import {NavController, NavParams, AlertController} from 'ionic-angular';
 import {CirchainService} from '../mesServices/circhainServices';
 import {LoginService} from '../mesServices/loginService';
+import {ScanPage} from '../scan/scan';
 import { TabsPage } from '../tabs/tabs';
 
 @Component({
+	selector: 'page-accueil',
     templateUrl: 'accueil.html',
     providers: [CirchainService]
 })
@@ -17,8 +19,10 @@ export class AccueilPage {
 	acteur: any;
 
     constructor(private navController: NavController,
+    			private navParams: NavParams,
     		 	private loginService: LoginService,
     		 	private formBuilder: FormBuilder,
+    		 	public alertCtrl: AlertController,
     		 	private infosActeur: CirchainService
     		 	) {
       this.acteur = JSON.parse(this.loginService.getInfosActeur());
@@ -33,10 +37,19 @@ export class AccueilPage {
 				data => {
 					this.status = data.status;
 					this.result = data.data;
-					if(this.status === "OK")
+					if(this.status === "OK"){
 						console.log(this.result);
-					else
-						console.log("Not good");
+						this.navController.push(ScanPage, {carte: this.result});
+						}
+					else{
+						//console.log("Not good");
+						let alert = this.alertCtrl.create({
+      					title: "Alert",
+      					subTitle: "Vous n'avez pas le droit de scanner cette carte",
+      					buttons: ['OK']
+    					});
+    					alert.present();
+  						}
 				},
 				err => {
 					console.log(err);

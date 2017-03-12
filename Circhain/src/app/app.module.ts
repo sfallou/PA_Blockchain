@@ -8,6 +8,7 @@ import { CartesPage } from '../pages/cartes/cartes';
 import { CarteDetailsPage } from '../pages/carte-details/carte-details';
 import { ProfilPage } from '../pages/profil/profil';
 import { NotificationsPage } from '../pages/notifications/notifications';
+import { ScanPage } from '../pages/scan/scan';
 import { TabsPage } from '../pages/tabs/tabs';
 
 @NgModule({
@@ -19,10 +20,11 @@ import { TabsPage } from '../pages/tabs/tabs';
     CarteDetailsPage,
     NotificationsPage,
     ProfilPage,
+    ScanPage,
     TabsPage
   ],
   imports: [
-    IonicModule.forRoot(MyApp,{tabsPlacement: 'top'})
+    IonicModule.forRoot(MyApp,{tabsPlacement: 'top', tabsHideOnSubPages:"true"}) 
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -33,6 +35,7 @@ import { TabsPage } from '../pages/tabs/tabs';
     CarteDetailsPage,
     NotificationsPage,
     ProfilPage,
+    ScanPage,
     TabsPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]

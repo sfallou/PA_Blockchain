@@ -6,13 +6,13 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <img src="img/nfc.png" width="100px">
+<ion-content padding class="accueil">
   <form [formGroup]="carte" (ngSubmit)="scanCarte()">
     <ion-item>
       <ion-label>ID Carte</ion-label>
       <ion-input type="text" formControlName="id"></ion-input>
     </ion-item>
-    <button ion-button type="Scanner Carte" [disabled]="!carte.valid">Submit</button>
+    <button ion-button type="submit" [disabled]="!carte.valid">Scanner la carte</button>
   </form>
+  <img src="img/nfc.png">
 </ion-content>

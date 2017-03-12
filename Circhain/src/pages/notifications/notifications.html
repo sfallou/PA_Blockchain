@@ -6,12 +6,32 @@
   </ion-navbar>
 </ion-header>
 
-
 <ion-content padding>
+  <ion-list>
+  <ion-list-header>Messages reçus </ion-list-header>
+    <button ion-item *ngFor="let item of messages_recus" (click)="itemTapped($event, item)">
+      <ion-icon name="ios-mail-outline" item-left></ion-icon>
+      <b>From : </b> {{item.id_emetteur}}<br>
+      <!--b>etat : </b> {{item.etat_notification}}<br-->
+    </button>
+  </ion-list>
+ 
+
+  <ion-list>
+  <ion-list-header>  Messages Envoyés </ion-list-header>
+    <button ion-item *ngFor="let item of messages_envoyes" (click)="itemTapped2($event, item)">
+      <ion-icon name="ios-send-outline" item-left></ion-icon>
+      <b>To : </b> {{item.id_destinataire}}<br>
+    </button>
+  </ion-list>
+  Nombre de messages non lus:  {{nb_msg_unread}}
+</ion-content>
+
+<!--ion-content padding>
 
   <h3>Welcome to your notifications!</h3>
 {{nb_msg_unread}} <br>
 {{messages_envoyes | json}} <br>
 {{messages_recus | json}}
 
-</ion-content>
+</ion-content-->
