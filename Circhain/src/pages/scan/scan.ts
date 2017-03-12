@@ -9,16 +9,19 @@ import {LoginService} from '../mesServices/loginService';
   providers: [CirchainService]
 })
 export class ScanPage {
-  selectedItem: any;
   carte: any;
   acteur : any;
-  status : String;
+  status : any;
+  id_carte :any;
+  proprietaire : any;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private cartesActeur: CirchainService, private loginService: LoginService)
   {
     // If we navigated to this page, we will have an item available as a nav param
     this.carte = navParams.get('carte');
-    console.log(this.carte);
+    this.id_carte = this.carte['id_carte'];
+    this.proprietaire = this.carte['proprietaire_actuel'];
+    //console.log(this.carte);
     this.acteur = JSON.parse(this.loginService.getInfosActeur());
     /*this.cartesActeur.mesCartes(this.acteur['id_acteur'],this.acteur['mdp']).subscribe(
 				data => {
