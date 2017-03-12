@@ -9,6 +9,38 @@
 
 <ion-content>
   <h3 text-center *ngIf="selectedItem">
-    Carte : {{selectedItem.id_carte}}
+  <ion-list>
+  	 <ion-item>
+      <ion-icon name="ios-play-outline" item-left></ion-icon>
+      <b>ID Carte </b> : {{id_carte}}
+     </ion-item>
+
+     <ion-item>
+      <ion-icon name="ios-play-outline" item-left></ion-icon>
+      <b>Date de création de la carte </b> : {{date_creation}}
+     </ion-item>
+
+     <ion-item>
+      <ion-icon name="ios-play-outline" item-left></ion-icon>
+      <b>ID Prorietaire actuel  </b> : {{proprietaire_actu}}
+     </ion-item>
+
+     <ion-item>
+      <ion-icon name="ios-play-outline" item-left></ion-icon>
+      <b>État actuel de la carte </b> : {{etat_carte}}
+     </ion-item>
+
+     <ion-item>
+      <!--ion-icon name="ios-play-outline" item-left></ion-icon-->
+      <b>Historique </b> 
+      	<li ion-item *ngFor="let item of historique">
+          <ion-icon name="ios-barcode" item-left></ion-icon>
+          <b>Du</b> {{item.date_recu}} <b> Au </b> {{item.date_emis}} <br>
+          Propietaire de la carte: {{item.prop_actu}} 
+        </li>
+     </ion-item>
+
+  </ion-list>
+
   </h3>
 </ion-content>

@@ -8,6 +8,9 @@ export class LoginService {
   adresse: string;
   profil: string;
   tel: string;
+  nombre_message_non_lus: any;
+  messages_envoyes: any;
+  messages_recus: any;
 
 constructor() {
         this.id_acteur = '';
@@ -18,9 +21,13 @@ constructor() {
         this.adresse = '';
         this.profil = '';
         this.tel = '';
+        this.nombre_message_non_lus = '';
+        this.messages_envoyes = '';
+        this.messages_recus = '';
+
     }
 
-    setInfosActeur(id,nom,prenom,email,mdp,adresse,profil,tel) {
+    setInfosActeur(id,nom,prenom,email,mdp,adresse,profil,tel,nb,msg_send,msg_read) {
         this.id_acteur = id;
         this.nom_acteur = nom;
         this.prenom_acteur = prenom;
@@ -29,6 +36,9 @@ constructor() {
         this.adresse = adresse;
         this.profil = profil;
         this.tel = tel;
+        this.nombre_message_non_lus = nb;
+        this.messages_envoyes = msg_send;
+        this.messages_recus = msg_read;
     }
 
     getInfosActeur() {
@@ -41,8 +51,15 @@ constructor() {
             mdp : this.mdp,
             adresse : this.adresse,
             profil : this.profil,
-            tel : this.tel
+            tel : this.tel,
+            nombre_message_non_lus: this.nombre_message_non_lus,
+            messages_envoyes: this.messages_envoyes,
+            messages_recus: this.messages_recus
           });
         return data;
+    }
+
+    setIndicateurMessage(new_indic){
+      this.nombre_message_non_lus = new_indic;
     }
 }

@@ -24,8 +24,15 @@ static get parameters() {
         return response;
     }
 
-    historiqueCarte(id_acteur,id_carte) {
+    scannerCarte(id_acteur,id_carte) {
         var url = 'http://challenge-2016.eclair.ec-lyon.fr/circhain/api/acteur/scanner/carte';
+        var data = JSON.stringify({id_acteur: id_acteur, id_carte: id_carte});
+        var response = this.http.post(url,data).map(res => res.json());
+        return response;
+    }
+
+    historiqueCarte(id_acteur,id_carte) {
+        var url = 'http://challenge-2016.eclair.ec-lyon.fr/circhain/api/acteur/historique/carte';
         var data = JSON.stringify({id_acteur: id_acteur, id_carte: id_carte});
         var response = this.http.post(url,data).map(res => res.json());
         return response;
