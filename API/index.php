@@ -36,15 +36,6 @@ class Acteur{
             die ("erreur connexion:".$e->getMessage() );
         }
     }
-    /*function set_id($id){
-        $this->id_acteur=$id;
-    
-    }
-    
-    function set_mdp($mdp){
-        $this->mdp=$mdp;
-    }
-    */
 
     function existe_acteur(){
         $req=$this->bdd->prepare('select * from Acteurs where id_acteur=:n1');
@@ -90,41 +81,7 @@ class Acteur{
         $donnees=$req->fetch();
         return $donnees['id_acteur'];
     }
-    /*
-    function supprimer_acteur(){
-        $req=$this->bdd->prepare("DELETE * FROM Acteurs where id_acteur=:n1");
-        $req->execute(array(':n1'=>$this->id_acteur));
-    }
-    */
-    // Fonction static qui permet d'avoir les infos d'un acteur sans instancier un objet
-    static function infos_acteur($id){
-        // On deinit l'objet $bdd qui represente la base de donnée
-        try {
-            $bdd=new PDO('mysql:host=localhost;dbname=circhain;charset=utf8','root','passer');
-            $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-        }
-        catch (Exception $e){
-            $bdd = Null;
-            die ("erreur connexion:".$e->getMessage() );
-        }
-        $req=$bdd->prepare('select * from Acteurs where id_acteur=:n1');
-        $req->execute(array(
-            ':n1'=>$id
-        ));
-        $data =array();
-        while($donnes=$req->fetch()){
-                    $data['id_acteur']=$donnes['id_acteur'];
-                    $data['nom']=$donnes['nom_acteur'];
-                    $data['prenom']=$donnes['prenom_acteur'];
-                    $data['email']=$donnes['email_acteur'];
-                    $data['mdp']=$donnes['mdp'];
-                    $data['adresse']=$donnes['adresse_acteur'];
-                    $data['tel']=$donnes['tel_acteur'];
-                    $data['profil']=$donnes['profil'];
-            }
-            return $data;
-    }
-
+    
     // Fonction authentification
     function authentifier_acteur(){
         if ($this->existe_acteur())
@@ -140,7 +97,7 @@ class Acteur{
             $res=$req->execute(array(
             ':n1'=>$id_carte,
             ':n2'=>$this->id_acteur,
-             ':n3'=>"en fabrication", 
+             ':n3'=>"reçue", 
              ':n4'=>date("Y-m-d H:i:s"), 
              ':n5'=>time()
             ));
@@ -191,6 +148,19 @@ class Acteur{
              ':n5'=>Null,
              ':n6'=>time()
             ));
+
+                // On enregistre les informations de notifications dans la table Notifications
+            $req=$this->bdd->prepare("INSERT INTO Notifications(id_acteur, id_destinataire, id_carte_concernee, type_notification, etat_notification,date_envoi, timestamp) VALUES (:n1, :n2, :n3, :n4, :n5, :n6, :n7)");
+            $res2=$req->execute(array(
+            ':n1'=>$this->id_acteur,
+            ':n2'=>$id_destinataire,
+             ':n3'=>$id_carte, 
+             ':n4' =>"émise",
+             ':n5' =>0,
+             ':n6'=>date("Y-m-d H:i:s"), 
+             ':n7'=>time()
+            ));
+
             return true;
 
             }
@@ -205,7 +175,7 @@ class Acteur{
     function scanner_carte($id_carte){
         if ($this->existe_acteur()){
             // On verifie si l'acteur a le droit de recevoir la carte ou pas
-            $req=$this->bdd->prepare('select * from Acteurs_Cartes where id_carte=:n1 and id_proprietaire_actu=:n2');
+            $req=$this->bdd->prepare('select * from Acteurs_Cartes where id_carte=:n1 and id_proprietaire_actu=:n2 order by id desc limit 1');
             $req->execute(array(
                 ':n1'=>$id_carte,
                 ':n2'=>$this->id_acteur,
@@ -214,6 +184,7 @@ class Acteur{
             while ($donnes=$req->fetch()) {
                     $date_recu=$donnes['date_recu'];
                     $id=$donnes['id_carte'];
+                    $id_proprietaire_prec =$donnes['id_proprietaire_prec'];
                 }
             // Si vrai, on modifie les tables Cartes, Acteurs_Cartes 
             // et on envoie l'historique de la carte
@@ -234,6 +205,17 @@ class Acteur{
                     ':n2'=>$id_carte
                     ));
                     
+                        // On enregistre les informations de notifications dans la table Notifications
+                    $req=$this->bdd->prepare("INSERT INTO Notifications(id_acteur, id_destinataire, id_carte_concernee, type_notification, etat_notification,date_envoi, timestamp) VALUES (:n1, :n2, :n3, :n4, :n5, :n6, :n7)");
+                    $res2=$req->execute(array(
+                    ':n1'=>$this->id_acteur,
+                    ':n2'=>$id_proprietaire_prec,
+                    ':n3'=>$id_carte, 
+                    ':n4' =>"reçue",
+                    ':n5' =>0,
+                    ':n6'=>date("Y-m-d H:i:s"), 
+                    ':n7'=>time()
+                    ));
                 }
                 // Ensuite on récupère les infos dans la table Cartes
     
@@ -248,7 +230,7 @@ class Acteur{
                 }
                 
                 // On envoie l'historique de la carte
-                $histoiques=array();
+                $historiques=array();
                 $req=$this->bdd->prepare('select * from Acteurs_Cartes where id_carte=:n1');
                 $req->execute(array(
                 ':n1'=>$id_carte,
@@ -258,19 +240,33 @@ class Acteur{
                     $prop_prec=$donnes['id_proprietaire_prec'];
                     $date_emis = $donnes['date_emis'];
                     $date_recu = $donnes['date_recu'];
-                    $histoiques[]=array('prop_actu'=>$prop_actu,'prop_prec'=>$prop_prec,'date_emis'=>$date_emis,'date_recu'=>$date_recu);
+                    $historiques[]=array('prop_actu'=>$prop_actu,'prop_prec'=>$prop_prec,'date_emis'=>$date_emis,'date_recu'=>$date_recu);
                 }
                 return array(
                         'id_carte'=>$id_carte,
                         'date_creation'=>$date_creation,
                         'etat_carte'=>$etat_carte,
                         'proprietaire_actuel'=>$proprietaire_actuel,
-                        'histoique'=>$histoiques
+                        'historique'=>$historiques
                     );
 
             }
             else
                 return "vous ne pouvez pas lire cette carte";
+        }
+        else
+            return false;
+    }
+    // Lire Notifications
+    function lire_notification($id_notification){
+        if ($this->existe_acteur()){
+            // On modifie etat_notification
+                    $req=$this->bdd->prepare("UPDATE Notifications SET etat_notification=:n1 WHERE id=:n2");
+                    $req->execute(array(
+                    ':n1'=>1,
+                    ':n2'=>$id_notification
+                    ));
+            return true;
         }
         else
             return false;
@@ -292,6 +288,116 @@ class Acteur{
         else
             return false;
     }
+
+    // Historique carte  
+    function historique_carte($id_carte){
+        if ($this->existe_acteur()){
+                // Ensuite on récupère les infos dans la table Cartes
+                $req3=$this->bdd->prepare('select * from Cartes where id_carte=:n1');
+                $req3->execute(array(
+                ':n1'=>$id_carte,
+                ));
+                while($donnees=$req3->fetch()){
+                    $proprietaire_actuel=$donnees['proprietaire_actu'];
+                    $date_creation=$donnees['date_creation'];
+                    $etat_carte = $donnees['etat_carte'];
+                }
+                
+                // On envoie l'historique de la carte
+                $historiques=array();
+                $req=$this->bdd->prepare('select * from Acteurs_Cartes where id_carte=:n1');
+                $req->execute(array(
+                ':n1'=>$id_carte,
+                ));
+                while($donnes=$req->fetch()){
+                    $prop_actu=$donnes['id_proprietaire_actu'];
+                    $prop_prec=$donnes['id_proprietaire_prec'];
+                    $date_emis = date_create($donnes['date_emis']);
+                    $date_recu = date_create($donnes['date_emis']);
+                    $date_emis = date_format($date_emis,'d/m/Y H:i:s');
+                    $date_recu = date_format($date_recu,'d/m/Y H:i:s');
+                    $historiques[]=array('prop_actu'=>$prop_actu,'prop_prec'=>$prop_prec,'date_emis'=>$date_emis,'date_recu'=>$date_recu);
+                }
+                return array(
+                        'id_carte'=>$id_carte,
+                        'date_creation'=>$date_creation,
+                        'etat_carte'=>$etat_carte,
+                        'proprietaire_actuel'=>$proprietaire_actuel,
+                        'historique'=>$historiques
+                    );
+        }
+        else
+            return false;
+    }
+/********************************************************************************/
+/* Les fonctions static 
+/********************************************************************************/
+    // Fonction static qui permet d'avoir les infos d'un acteur sans instancier un objet
+    static function infos_acteur($id){
+        // On deinit l'objet $bdd qui represente la base de donnée
+        try {
+            $bdd=new PDO('mysql:host=localhost;dbname=circhain;charset=utf8','root','passer');
+            $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        }
+        catch (Exception $e){
+            $bdd = Null;
+            die ("erreur connexion:".$e->getMessage() );
+        }
+        $req=$bdd->prepare('select * from Acteurs where id_acteur=:n1');
+        $req->execute(array(
+            ':n1'=>$id
+        ));
+        $data =array();
+        $messages_envoyes = array();
+        $messages_recus = array();
+        $nbr_messages_recus_non_lu = 0;
+        while($donnes=$req->fetch()){
+                    $data['id_acteur']=$donnes['id_acteur'];
+                    $data['nom']=$donnes['nom_acteur'];
+                    $data['prenom']=$donnes['prenom_acteur'];
+                    $data['email']=$donnes['email_acteur'];
+                    $data['mdp']=$donnes['mdp'];
+                    $data['adresse']=$donnes['adresse_acteur'];
+                    $data['tel']=$donnes['tel_acteur'];
+                    $data['profil']=$donnes['profil'];
+            }
+        $req2=$bdd->prepare('select * from Notifications where id_destinataire=:n1 or id_acteur=:n1');
+        $req2->execute(array(
+            ':n1'=>$id
+        ));
+        while($donnes2=$req2->fetch()){
+                if($donnes2['id_acteur']==$id){
+                    $date_envoi = date_create($donnes2['date_envoi']);
+                    $date_envoi = date_format($date_envoi,'d/m/Y H:i:s');
+                    $messages_envoyes[] = array(
+                        'id_notification'=>$donnes2['id'],
+                        'id_destinataire'=>$donnes2['id_destinataire'],
+                        'id_carte_concernee'=>$donnes2['id_carte_concernee'],
+                        'type_notification'=>$donnes2['type_notification'],
+                        'date_envoi'=>$date_envoi);
+                }
+                else{
+                    $date_envoi = date_create($donnes2['date_envoi']);
+                    $date_envoi = date_format($date_envoi,'d/m/Y H:i:s');
+                    $messages_recus[] = array(
+                        'id_notification'=>$donnes2['id'],
+                        'id_emetteur'=>$donnes2['id_acteur'],
+                        'id_carte_concernee'=>$donnes2['id_carte_concernee'],
+                        'type_notification'=>$donnes2['type_notification'],
+                        'etat_notification'=>$donnes2['etat_notification'],
+                        'date_envoi'=>$date_envoi);
+                    if($donnes2['etat_notification']==0)
+                        $nbr_messages_recus_non_lu = $nbr_messages_recus_non_lu +1;
+                }
+
+            }
+            $data['nombre_message_non_lus'] = $nbr_messages_recus_non_lu;
+            $data['messages_envoyes'] = $messages_envoyes;
+            $data['messages_recus'] = $messages_recus;
+
+            return $data;
+    }
+
     // Fonction static qui permet d'avoir la listes des acteurs
     static function les_acteurs(){
         // On deinit l'objet $bdd qui represente la base de donnée
@@ -329,8 +435,8 @@ class Acteur{
         return $data;
     }
 
-
 }
+
 /************************************************/
 /* Début phalcon
 /************************************************/
@@ -378,7 +484,7 @@ $app = new Micro($di);
 
 
 // ajouter un nouvel acteur
-$app->post('/api/acteur', function () use ($app) {
+$app->post('/api/creer/acteur', function () use ($app) {
     
     // On récupère les infos en json qu'on traduit en objet php
     $acteur = $app->request->getJsonRawBody();
@@ -630,11 +736,15 @@ $app->post('/api/acteur/scanner/carte', function () use ($app) {
         // On va instancier un objet de la classe Acteur
         $new_acteur = new Acteur($id_acteur,$acteur['nom'],$acteur['prenom'],$acteur['email'],$acteur['mdp'],$acteur['profil'],$acteur['adresse'],$acteur['tel']);
         $bool=$new_acteur->scanner_carte($id_carte);
+        if(is_array($bool))
+            $val_staut = 'OK';
+        else
+            $val_staut = 'NOT';
         // Change the HTTP status
         $response->setStatusCode(201, "Created");
         $response->setJsonContent(
             array(
-                'status' => 'OK',
+                'status' => $val_staut,
                 'data'   => $bool
             )
         );
@@ -655,7 +765,7 @@ $app->post('/api/acteur/scanner/carte', function () use ($app) {
     return $response;
 });
 
-// scanner une carte
+// Récuperer mes cartes
 $app->post('/api/acteur/mes/cartes', function () use ($app) {
     
     // On récupère les infos en json qu'on traduit en objet php
@@ -694,6 +804,90 @@ $app->post('/api/acteur/mes/cartes', function () use ($app) {
     }
     return $response;
 });
+
+// historique d'une carte
+$app->post('/api/acteur/historique/carte', function () use ($app) {
+    
+    // On récupère les infos en json qu'on traduit en objet php
+    $infos_envoi = $app->request->getJsonRawBody();
+    $id_acteur =$infos_envoi->id_acteur;
+    $id_carte =$infos_envoi->id_carte;
+    // On crée la  response à renvoyer  
+    $response = new Response();
+    //On récupères les données de l'acteur
+    $acteur = Acteur::infos_acteur($id_acteur);
+    if(count($acteur)>0){
+        // On va instancier un objet de la classe Acteur
+        $new_acteur = new Acteur($id_acteur,$acteur['nom'],$acteur['prenom'],$acteur['email'],$acteur['mdp'],$acteur['profil'],$acteur['adresse'],$acteur['tel']);
+        $bool=$new_acteur->historique_carte($id_carte);
+        // Change the HTTP status
+        $response->setStatusCode(201, "Created");
+        $response->setJsonContent(
+            array(
+                'status' => 'OK',
+                'data'   => $bool
+            )
+        );
+    }
+    else{
+        // Change the HTTP status
+        $response->setStatusCode(409, "Conflict");
+        // Send errors to the client
+        $errors = " Erreur, cette identifiant n'existe pas dans la blockchain";
+        $response->setJsonContent(
+            array(
+                'status'   => 'ERROR',
+                'data' => $errors
+            )
+        );
+
+    }
+    return $response;
+});
+
+// Lire notification
+$app->post('/api/acteur/lire/notification', function () use ($app) {
+    
+    // On récupère les infos en json qu'on traduit en objet php
+    $infos_envoi = $app->request->getJsonRawBody();
+    $id_notification =$infos_envoi->id_notification;
+    $etat_notification =$infos_envoi->etat_notification;
+    $id_acteur =$infos_envoi->id_acteur;
+    // On crée la  response à renvoyer  
+    $response = new Response();
+    //On récupères les données de l'acteur
+    $acteur = Acteur::infos_acteur($id_acteur);
+    if(count($acteur)>0){
+        // On va instancier un objet de la classe Acteur
+        $new_acteur = new Acteur($id_acteur,$acteur['nom'],$acteur['prenom'],$acteur['email'],$acteur['mdp'],$acteur['profil'],$acteur['adresse'],$acteur['tel']);
+        $bool = true;
+        if($etat_notification == 0) // si le message n'est pas encore lu
+            $bool=$new_acteur->lire_notification($id_notification);
+        // Change the HTTP status
+        $response->setStatusCode(201, "Created");
+        $response->setJsonContent(
+            array(
+                'status' => 'OK',
+                'data'   => $bool
+            )
+        );
+    }
+    else{
+        // Change the HTTP status
+        $response->setStatusCode(409, "Conflict");
+        // Send errors to the client
+        $errors = " Erreur, cette identifiant n'existe pas dans la blockchain ";
+        $response->setJsonContent(
+            array(
+                'status'   => 'ERROR',
+                'data' => $errors
+            )
+        );
+
+    }
+    return $response;
+});
+
 
 
 //////////// Démarrage du serveur /////////
