@@ -4,10 +4,12 @@ import { AccueilPage } from '../accueil/accueil';
 import { CartesPage } from '../cartes/cartes';
 import { ProfilPage } from '../profil/profil';
 import { NotificationsPage } from '../notifications/notifications';
+import {CirchainService} from '../mesServices/circhainServices';
 
 
 @Component({
-  templateUrl: 'tabs.html'
+  templateUrl: 'tabs.html',
+  providers: [CirchainService]
 })
 export class TabsPage {
   // this tells the tabs component which Pages
@@ -18,9 +20,20 @@ export class TabsPage {
   tab4Root: any = ProfilPage;
   acteur: any;
   nbr_msg_unread : any;
-
-  constructor(private loginService: LoginService) {
+  status : any;
+  result : any;
+  
+  constructor(private loginService: LoginService,private infosActeur: CirchainService) {
   	this.acteur = JSON.parse(this.loginService.getInfosActeur());
-  	this.nbr_msg_unread = this.acteur['nombre_message_non_lus'];
+    this.infosActeur.mesNotifications(this.acteur['id_acteur'],this.acteur['mdp']).subscribe(
+        data => {
+          this.status = data.status;
+          this.result = data.data;
+          this.nbr_msg_unread = this.result['nombre_message_non_lus'];
+        },
+        err => {
+          console.log(err);
+        }
+      );
   }
 }

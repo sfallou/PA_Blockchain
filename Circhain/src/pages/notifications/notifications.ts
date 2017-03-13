@@ -28,9 +28,19 @@ export class NotificationsPage {
     // If we navigated to this page, we will have an item available as a nav param
     this.selectedItem = navParams.get('item');
     this.acteur = JSON.parse(this.loginService.getInfosActeur());
-    this.nb_msg_unread = this.acteur['nombre_message_non_lus'];
-    this.messages_envoyes = this.acteur['messages_envoyes'];
-    this.messages_recus = this.acteur['messages_recus'];
+    this.infosActeur.mesNotifications(this.acteur['id_acteur'],this.acteur['mdp']).subscribe(
+        data => {
+          this.status = data.status;
+          this.result = data.data;
+          this.nb_msg_unread = this.result['nombre_message_non_lus'];
+          this.messages_envoyes = this.result['messages_envoyes'];
+          this.messages_recus = this.result['messages_recus'];
+          
+        },
+        err => {
+          console.log(err);
+        }
+      );
   }
 
   itemTapped(event, item) {
@@ -45,9 +55,9 @@ export class NotificationsPage {
           this.result = data.data;
           if(this.status === "OK"){
             console.log(this.result);
-            var nb = this.acteur['nombre_message_non_lus']-1;
-            this.loginService.setIndicateurMessage(nb);
-            this.messages_recus = this.acteur['messages_recus'];
+            //var nb = this.acteur['nombre_message_non_lus']-1;
+            //this.loginService.setIndicateurMessage(nb);
+            //this.messages_recus = this.acteur['messages_recus'];
           }
           else
             console.log("Not read");

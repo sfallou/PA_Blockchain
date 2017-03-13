@@ -3,6 +3,15 @@
 
     <item
         is-multidex="false"
+        jar="/Users/sfallou/PA_Blockchain/Circhain/platforms/android/build/intermediates/exploded-aar/android/CordovaLib/unspecified/debug/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="afe8eb4906b94df000e2b3714c864ec42d4e4ea6">
+        <dex dex="/Users/sfallou/PA_Blockchain/Circhain/platforms/android/build/intermediates/pre-dexed/debug/CordovaLib-unspecified-debug_4cd569c93a939f9575775a257ab2916b021543ee.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/Users/sfallou/PA_Blockchain/Circhain/platforms/android/build/intermediates/exploded-aar/android/CordovaLib/unspecified/release/jars/classes.jar"
         jumboMode="false"
         optimize="true"

@@ -40,11 +40,11 @@ export class LoginPage {
               var mdp = this.result['mdp'];
               var adresse = this.result['adresse'];
               var profil = this.result['profil'];
-              var nb = this.result['nombre_message_non_lus'];
+              /*var nb = this.result['nombre_message_non_lus'];
               var msg_send = this.result['messages_envoyes'];
-              var msg_read = this.result['messages_recus'];
+              var msg_read = this.result['messages_recus'];*/
               var tel = this.result['tel'];
-              this.loginService.setInfosActeur(id,nom,prenom,email,mdp,adresse,profil,tel,nb,msg_send,msg_read);
+              this.loginService.setInfosActeur(id,nom,prenom,email,mdp,adresse,profil,tel);
               this.navController.setRoot(TabsPage );
             //console.log(this.loginService.getInfosActeur());
           }

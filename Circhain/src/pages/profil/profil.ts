@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { NavController} from 'ionic-angular';
 import {LoginService} from '../mesServices/loginService';
+import {LoginPage} from '../login/login';
 
 @Component({
   selector: 'page-profil',
   templateUrl: 'profil.html',
- // providers: [CirchainService]
+  //providers: [LoginPage]
 })
 export class ProfilPage {
   acteur : any;
@@ -30,6 +31,10 @@ export class ProfilPage {
     this.profil = this.acteur['profil'];
     this.adresse = this.acteur['adresse'];
     this.tel = this.acteur['tel'];
-  }Ò
+  }
+
+  /*deconnexion(){
+    this.navCtrl.setRoot(LoginPage);
+  }*/
 }
 

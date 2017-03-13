@@ -38,6 +38,13 @@ static get parameters() {
         return response;
     }
 
+     mesNotifications(id,pass) {
+        var url = 'http://challenge-2016.eclair.ec-lyon.fr/circhain/api/acteur/mes/notifications';
+        var data = JSON.stringify({id_acteur: id, mdp: pass });
+        var response = this.http.post(url,data).map(res => res.json());
+        return response;
+    }
+
     lireNotification(id_notification,etat_notification,id_acteur) {
         var url = 'http://challenge2016.eclair.ec-lyon.fr/circhain/api/acteur/lire/notification';
         var data = JSON.stringify({id_notification: id_notification, etat_notification: etat_notification ,id_acteur: id_acteur});
