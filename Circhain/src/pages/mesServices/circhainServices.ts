@@ -45,10 +45,17 @@ static get parameters() {
         return response;
     }
 
-    envoyerCarte(id_acteur,id_destinataire,id_carte,) {
+    envoyerCarte(id_acteur,id_destinataire,id_carte) {
         var url = ' http://challenge2016.eclair.ec-lyon.fr/circhain/api/acteur/envoyer/carte';
         var data = JSON.stringify({id_acteur: id_acteur, id_destinataire:id_destinataire, id_carte: id_carte});
         var response = this.http.post(url,data).map(res => res.json());
         return response;
     }
+
+    tousLesActeurs() {
+        var url = 'http://challenge2016.eclair.ec-lyon.fr/circhain/api/acteurs';
+        var response = this.http.get(url).map(res => res.json());
+        return response;
+    }
+
 }

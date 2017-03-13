@@ -4,7 +4,7 @@ import {NavController, NavParams, AlertController} from 'ionic-angular';
 import {CirchainService} from '../mesServices/circhainServices';
 import {LoginService} from '../mesServices/loginService';
 import {ScanPage} from '../scan/scan';
-import { TabsPage } from '../tabs/tabs';
+//import { TabsPage } from '../tabs/tabs';
 
 @Component({
 	selector: 'page-accueil',
@@ -37,14 +37,14 @@ export class AccueilPage {
 				data => {
 					this.status = data.status;
 					this.result = data.data;
-					if(this.status === "OK"){
+					if(this.status === "OK" && this.result['proprietaire_actuel']===this.acteur['id_acteur']){
 						console.log(this.result);
 						this.navController.push(ScanPage, {carte: this.result});
 						}
 					else{
 						//console.log("Not good");
 						let alert = this.alertCtrl.create({
-      					title: "Alert",
+      					title: "Attention!",
       					subTitle: "Vous n'avez pas le droit de scanner cette carte",
       					buttons: ['OK']
     					});
