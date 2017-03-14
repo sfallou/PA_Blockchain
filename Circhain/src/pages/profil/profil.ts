@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { NavController} from 'ionic-angular';
+import { NavController, App} from 'ionic-angular';
 import {LoginService} from '../mesServices/loginService';
 import {LoginPage} from '../login/login';
 
 @Component({
   selector: 'page-profil',
   templateUrl: 'profil.html',
-  //providers: [LoginPage]
+  //providers: [AccueilPage]
 })
 export class ProfilPage {
   acteur : any;
@@ -20,7 +20,7 @@ export class ProfilPage {
   tel : String;
 
 
-   constructor(public navCtrl: NavController,private loginService: LoginService)
+   constructor(public navCtrl: NavController,public app: App,private loginService: LoginService)
   {
 
     this.acteur = JSON.parse(this.loginService.getInfosActeur());
@@ -34,7 +34,7 @@ export class ProfilPage {
   }
 
   deconnexion(){
-    //this.navCtrl.setRoot(LoginPage);
+    this.app.getRootNav().setRoot( LoginPage );
   }
 }
 
