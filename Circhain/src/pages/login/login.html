@@ -4,7 +4,7 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content padding class="login">
   <form [formGroup]="acteur" (ngSubmit)="loginForm()">
     <ion-item>
       <ion-label>Identifiant</ion-label>
@@ -16,5 +16,5 @@
     </ion-item>
     <button ion-button type="submit" [disabled]="!acteur.valid" color="secondary" full>Connexion</button>
   </form>
-
+   <img src="img/logo.png">
 </ion-content>

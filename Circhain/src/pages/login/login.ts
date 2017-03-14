@@ -6,6 +6,7 @@ import {LoginService} from '../mesServices/loginService';
 import { TabsPage } from '../tabs/tabs';
 
 @Component({
+    selector: 'page-login',
     templateUrl: 'login.html',
     providers: [CirchainService]
 })

@@ -1,6 +1,7 @@
 import {Http} from '@angular/http';
 import 'rxjs/add/operator/map';
 
+
 export class CirchainService {
 static get parameters() {
         return [[Http]];

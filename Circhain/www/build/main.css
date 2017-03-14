@@ -21279,3 +21279,53 @@ page-accueil .accueil img {
   margin: auto;
   display: block;
 }
+
+page-carte-details .ion-ios-bonhome,
+page-carte-details .ion-md-bonhome {
+  content: url(../../assets/img/bonhome.png);
+  width: 52px;
+  height: 42px;
+  padding: 6px 4px 2px;
+  opacity: 0.9;
+}
+
+page-login .login img {
+  height: 50vh;
+  width: auto;
+  margin: auto;
+  display: block;
+}
+
+page-tabs .ion-ios-accueil,
+page-tabs .ion-md-accueil,
+page-tabs .ion-ios-livia,
+page-tabs .ion-md-livia,
+page-tabs .ion-ios-carte,
+page-tabs .ion-md-carte,
+page-tabs .ion-ios-profil,
+page-tabs .ion-md-profil {
+  width: 52px;
+  height: 42px;
+  padding: 6px 4px 2px;
+  opacity: 0.9;
+}
+
+page-tabs .ion-ios-livia,
+page-tabs .ion-md-livia {
+  content: url(../../assets/img/livia.png);
+}
+
+page-tabs .ion-ios-carte,
+page-tabs .ion-md-carte {
+  content: url(../../assets/img/logo.png);
+}
+
+page-tabs .ion-ios-profil,
+page-tabs .ion-md-profil {
+  content: url(../../assets/img/bonhome.png);
+}
+
+page-tabs .ion-ios-accueil,
+page-tabs .ion-md-accueil {
+  content: url(../../assets/img/qrcode.png);
+}

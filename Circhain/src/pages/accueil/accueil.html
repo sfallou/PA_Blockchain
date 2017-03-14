@@ -9,10 +9,10 @@
 <ion-content padding class="accueil">
   <form [formGroup]="carte" (ngSubmit)="scanCarte()">
     <ion-item>
-      <ion-label>ID Carte</ion-label>
+      <ion-label>CICO</ion-label>
       <ion-input type="text" formControlName="id"></ion-input>
     </ion-item>
     <button ion-button type="submit" [disabled]="!carte.valid" color="secondary" full>Scanner la carte</button>
   </form>
-  <img src="img/logo_nfc.png">
+  <img src="img/qrcode.png">
 </ion-content>

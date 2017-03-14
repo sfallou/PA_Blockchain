@@ -8,6 +8,7 @@ import {CirchainService} from '../mesServices/circhainServices';
 
 
 @Component({
+  selector: 'page-tabs',
   templateUrl: 'tabs.html',
   providers: [CirchainService]
 })
