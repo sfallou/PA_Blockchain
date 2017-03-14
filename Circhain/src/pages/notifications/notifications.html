@@ -8,7 +8,13 @@
 
 <ion-content padding>
   <ion-list>
-  <ion-list-header>Messages reçus </ion-list-header>
+  <ion-list-header>
+   <button ion-button color="secondary" full>
+      <ion-icon name="ios-mail-outline" item-left></ion-icon>
+      Messages reçus 
+    </button>
+  </ion-list-header>
+
     <button ion-item *ngFor="let item of messages_recus" (click)="itemTapped($event, item)">
       <ion-icon name="ios-mail-outline" item-left></ion-icon>
       <b>From : </b> {{item.id_emetteur}}<br>
@@ -18,7 +24,13 @@
  
 
   <ion-list>
-  <ion-list-header>  Messages Envoyés </ion-list-header>
+  <ion-list-header>
+  <button ion-button color="secondary" full>
+      <ion-icon name="ios-mail-outline" item-left></ion-icon>
+      Messages envoyés 
+    </button>
+  </ion-list-header>
+
     <button ion-item *ngFor="let item of messages_envoyes" (click)="itemTapped2($event, item)">
       <ion-icon name="ios-send-outline" item-left></ion-icon>
       <b>To : </b> {{item.id_destinataire}}<br>
