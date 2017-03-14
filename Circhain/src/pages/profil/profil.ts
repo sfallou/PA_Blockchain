@@ -33,8 +33,8 @@ export class ProfilPage {
     this.tel = this.acteur['tel'];
   }
 
-  /*deconnexion(){
-    this.navCtrl.setRoot(LoginPage);
-  }*/
+  deconnexion(){
+    //this.navCtrl.setRoot(LoginPage);
+  }
 }
 

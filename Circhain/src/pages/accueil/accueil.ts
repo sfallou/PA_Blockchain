@@ -38,7 +38,7 @@ export class AccueilPage {
 					this.status = data.status;
 					this.result = data.data;
 					if(this.status === "OK" && this.result['proprietaire_actuel']===this.acteur['id_acteur']){
-						console.log(this.result);
+						//console.log(this.result);
 						this.navController.push(ScanPage, {carte: this.result});
 						}
 					else{
