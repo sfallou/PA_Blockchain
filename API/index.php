@@ -28,7 +28,7 @@ class Acteur{
         $this->tel=$tel;
         // On deinit l'objet $bdd qui represente la base de donnée
         try {
-            $this->bdd=new PDO('mysql:host=localhost;dbname=circhain;charset=utf8','root','passer');
+            $this->bdd=new PDO('mysql:host=localhost;dbname=test;charset=utf8','test','test');
             $this->bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         }
         catch (Exception $e){
@@ -271,8 +271,53 @@ class Acteur{
         else
             return false;
     }
+    // Fonction mes_notifications 
+    function mes_notifications(){
+        if ($this->existe_acteur()){
+            $data =array();
+            $messages_envoyes = array();
+            $messages_recus = array();
+            $nbr_messages_recus_non_lu = 0;
+            $req2=$this->bdd->prepare('select * from Notifications where id_destinataire=:n1 or id_acteur=:n1');
+            $req2->execute(array(
+            ':n1'=>$this->id_acteur
+            ));
+            while($donnes2=$req2->fetch()){
+                if($donnes2['id_acteur']==$this->id_acteur){
+                    $date_envoi = date_create($donnes2['date_envoi']);
+                    $date_envoi = date_format($date_envoi,'d/m/Y H:i:s');
+                    $messages_envoyes[] = array(
+                        'id_notification'=>$donnes2['id'],
+                        'id_destinataire'=>$donnes2['id_destinataire'],
+                        'id_carte_concernee'=>$donnes2['id_carte_concernee'],
+                        'type_notification'=>$donnes2['type_notification'],
+                        'date_envoi'=>$date_envoi);
+                }
+                else{
+                    $date_envoi = date_create($donnes2['date_envoi']);
+                    $date_envoi = date_format($date_envoi,'d/m/Y H:i:s');
+                    $messages_recus[] = array(
+                        'id_notification'=>$donnes2['id'],
+                        'id_emetteur'=>$donnes2['id_acteur'],
+                        'id_carte_concernee'=>$donnes2['id_carte_concernee'],
+                        'type_notification'=>$donnes2['type_notification'],
+                        'etat_notification'=>$donnes2['etat_notification'],
+                        'date_envoi'=>$date_envoi);
+                    if($donnes2['etat_notification']==0)
+                        $nbr_messages_recus_non_lu = $nbr_messages_recus_non_lu +1;
+                }
 
-    // Fonction mes_cartes 
+            }
+            $data['nombre_message_non_lus'] = $nbr_messages_recus_non_lu;
+            $data['messages_envoyes'] = $messages_envoyes;
+            $data['messages_recus'] = $messages_recus;
+
+            return $data;
+        }
+        else
+            return false;
+    }
+  
     function mes_cartes(){
         if ($this->existe_acteur()){
             $req=$this->bdd->prepare('select * from Acteurs_Cartes where id_proprietaire_actu=:n1 or id_proprietaire_prec=:n1 ');
@@ -283,7 +328,19 @@ class Acteur{
             while ($donnes=$req->fetch()) {
                     $data[]=array('id_carte'=>$donnes['id_carte']);
             }
-            return $data;
+            $temp_array = array(); 
+            $i = 0; 
+            $key_array = array();
+            $key = 'id_carte'; 
+            foreach($data as $val) { 
+                if (!in_array($val[$key], $key_array)) { 
+                    $key_array[$i] = $val[$key]; 
+                    $temp_array[$i] = $val; 
+                } 
+                $i++; 
+            } 
+            return $temp_array;
+            //return $data;
         }
         else
             return false;
@@ -336,7 +393,7 @@ class Acteur{
     static function infos_acteur($id){
         // On deinit l'objet $bdd qui represente la base de donnée
         try {
-            $bdd=new PDO('mysql:host=localhost;dbname=circhain;charset=utf8','root','passer');
+            $bdd=new PDO('mysql:host=localhost;dbname=test;charset=utf8','test','test');
             $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         }
         catch (Exception $e){
@@ -348,9 +405,6 @@ class Acteur{
             ':n1'=>$id
         ));
         $data =array();
-        $messages_envoyes = array();
-        $messages_recus = array();
-        $nbr_messages_recus_non_lu = 0;
         while($donnes=$req->fetch()){
                     $data['id_acteur']=$donnes['id_acteur'];
                     $data['nom']=$donnes['nom_acteur'];
@@ -361,40 +415,6 @@ class Acteur{
                     $data['tel']=$donnes['tel_acteur'];
                     $data['profil']=$donnes['profil'];
             }
-        $req2=$bdd->prepare('select * from Notifications where id_destinataire=:n1 or id_acteur=:n1');
-        $req2->execute(array(
-            ':n1'=>$id
-        ));
-        while($donnes2=$req2->fetch()){
-                if($donnes2['id_acteur']==$id){
-                    $date_envoi = date_create($donnes2['date_envoi']);
-                    $date_envoi = date_format($date_envoi,'d/m/Y H:i:s');
-                    $messages_envoyes[] = array(
-                        'id_notification'=>$donnes2['id'],
-                        'id_destinataire'=>$donnes2['id_destinataire'],
-                        'id_carte_concernee'=>$donnes2['id_carte_concernee'],
-                        'type_notification'=>$donnes2['type_notification'],
-                        'date_envoi'=>$date_envoi);
-                }
-                else{
-                    $date_envoi = date_create($donnes2['date_envoi']);
-                    $date_envoi = date_format($date_envoi,'d/m/Y H:i:s');
-                    $messages_recus[] = array(
-                        'id_notification'=>$donnes2['id'],
-                        'id_emetteur'=>$donnes2['id_acteur'],
-                        'id_carte_concernee'=>$donnes2['id_carte_concernee'],
-                        'type_notification'=>$donnes2['type_notification'],
-                        'etat_notification'=>$donnes2['etat_notification'],
-                        'date_envoi'=>$date_envoi);
-                    if($donnes2['etat_notification']==0)
-                        $nbr_messages_recus_non_lu = $nbr_messages_recus_non_lu +1;
-                }
-
-            }
-            $data['nombre_message_non_lus'] = $nbr_messages_recus_non_lu;
-            $data['messages_envoyes'] = $messages_envoyes;
-            $data['messages_recus'] = $messages_recus;
-
             return $data;
     }
 
@@ -402,7 +422,7 @@ class Acteur{
     static function les_acteurs(){
         // On deinit l'objet $bdd qui represente la base de donnée
         try {
-            $bdd=new PDO('mysql:host=localhost;dbname=circhain;charset=utf8','root','passer');
+            $bdd=new PDO('mysql:host=localhost;dbname=test;charset=utf8','test','test');
             $bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         }
         catch (Exception $e){
@@ -463,9 +483,9 @@ $di = new FactoryDefault();
 $di->set('db', function () {
     return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
         "host" => "localhost",
-        "username" => "root",
-        "password" => "passer",
-        "dbname"   => "circhain",
+        "username" => "test",
+        "password" => "test",
+        "dbname"   => "test",
         "options" => array(
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
         )
@@ -780,6 +800,46 @@ $app->post('/api/acteur/mes/cartes', function () use ($app) {
         // On va instancier un objet de la classe Acteur
         $new_acteur = new Acteur($id_acteur,$acteur['nom'],$acteur['prenom'],$acteur['email'],$acteur['mdp'],$acteur['profil'],$acteur['adresse'],$acteur['tel']);
         $bool=$new_acteur->mes_cartes();
+        // Change the HTTP status
+        $response->setStatusCode(201, "Created");
+        $response->setJsonContent(
+            array(
+                'status' => 'OK',
+                'data'   => $bool
+            )
+        );
+    }
+    else{
+        // Change the HTTP status
+        $response->setStatusCode(409, "Conflict");
+        // Send errors to the client
+        $errors = " Erreur, les infos fournis ne sont pas conformes";
+        $response->setJsonContent(
+            array(
+                'status'   => 'ERROR',
+                'data' => $errors
+            )
+        );
+
+    }
+    return $response;
+});
+
+// Récuperer mes notifications
+$app->post('/api/acteur/mes/notifications', function () use ($app) {
+    
+    // On récupère les infos en json qu'on traduit en objet php
+    $infos_envoi = $app->request->getJsonRawBody();
+    $id_acteur =$infos_envoi->id_acteur;
+    $mdp =$infos_envoi->mdp;
+    // On crée la  response à renvoyer  
+    $response = new Response();
+    //On récupères les données de l'acteur
+    $acteur = Acteur::infos_acteur($id_acteur);
+    if(count($acteur)>0 and $acteur['mdp']==$mdp){
+        // On va instancier un objet de la classe Acteur
+        $new_acteur = new Acteur($id_acteur,$acteur['nom'],$acteur['prenom'],$acteur['email'],$acteur['mdp'],$acteur['profil'],$acteur['adresse'],$acteur['tel']);
+        $bool=$new_acteur->mes_notifications();
         // Change the HTTP status
         $response->setStatusCode(201, "Created");
         $response->setJsonContent(
