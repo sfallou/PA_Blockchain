@@ -10,11 +10,13 @@
   <p>
   <img src="img/qrcode.png">
   </p><br>
-  <form [formGroup]="carte" (ngSubmit)="scanCarte()">
+  <!--form [formGroup]="carte" (ngSubmit)="scanCarte()">
     <button ion-button type="submit" [disabled]="!carte.valid" color="secondary" full>Scanner la carte</button><br>
     <ion-item>
       <ion-label>CICO</ion-label>
       <ion-input type="text" formControlName="id"></ion-input>
     </ion-item>
-  </form>
+  </form-->
+  <button ion-button color="secondary" full  (click)="scanCarte()">Scanner la carte</button><br>
+   
 </ion-content>
