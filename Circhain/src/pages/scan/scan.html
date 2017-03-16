@@ -7,34 +7,25 @@
 </ion-header>
 
 
-<ion-content>
+<ion-content class="scan">
   <ion-list>
      <ion-item>
-      <ion-icon name="ios-play-outline" item-left></ion-icon>
-      <b>ID Carte </b> : {{id_carte}}
+      <b>CICO</b> : {{id_carte}}
      </ion-item>
 
      <ion-item>
-      <ion-icon name="ios-play-outline" item-left></ion-icon>
-      <b>ID Prorietaire actuel  </b> : {{proprietaire}}
+      <b>Prorietaire  </b> : {{proprietaire}}
      </ion-item>
+    <ion-item>
+      <p>
+        <img src="img/vendre.png"   (click)="toSend()">
+      </p>
+      <p>
+        <img src="img/historique.png"  (click)="showHistory()">
+      </p>
+      <p>
+        <img src="img/commande.png"  (click)="toOrder()">
+      </p>
+      </ion-item>
   </ion-list>
-  <!--p>
-     <button ion-button color="secondary" icon-left>
-      <ion-icon name='people'></ion-icon>
-      Envoyer
-    </button>
-  </p-->
-  <p>
-    <button ion-button color="secondary" full (click)="toSend()"> Envoyer </button>
-  </p>
-
-  <p>
-    <button ion-button color="secondary" full (click)="showHistory()"> Historique </button>
-  </p>
-
-  <p>
-    <button ion-button color="secondary" full (click)="toOrder()"> Commander </button>
-  </p>
-
 </ion-content>

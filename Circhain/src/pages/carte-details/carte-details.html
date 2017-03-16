@@ -6,33 +6,38 @@
   </ion-navbar>
 </ion-header>
 
-
 <ion-content>
   <h3 text-center *ngIf="selectedItem">
   <ion-list>
+    <ion-list-header>
+   <button ion-button color="secondary" full>
+      <ion-icon name="ios-pulse-outline" item-left></ion-icon>
+      Historique  
+    </button>
+  </ion-list-header>
   	 <ion-item>
-      <!--ion-icon name="ios-play-outline" item-left></ion-icon-->
       <b>CICO </b> <br> {{id_carte}}
      </ion-item>
 
      <ion-item>
-      <!--ion-icon name="ios-play-outline" item-left></ion-icon-->
-      <b>Date de création de la carte </b> <br> {{date_creation}}
+      <b>Prorietaire actuel  </b> <br> {{proprietaire_actu}}
      </ion-item>
 
      <ion-item>
-      <!--ion-icon name="ios-play-outline" item-left></ion-icon-->
-      <b>ID Prorietaire actuel  </b> <br> {{proprietaire_actu}}
-     </ion-item>
-
-     <ion-item>
-      <!--ion-icon name="ios-play-outline" item-left></ion-icon-->
       <b>État actuel de la carte </b> <br> {{etat_carte}}
      </ion-item>
 
      <ion-item>
-      <!--ion-icon name="ios-play-outline" item-left></ion-icon-->
-      <b>Historique </b> 
+      <b>Date de création de la carte </b> <br> {{date_creation}}
+     </ion-item>
+
+     <ion-list-header>
+   <button ion-button color="secondary" full>
+      <ion-icon name="ios-swap-outline" item-left></ion-icon>
+      Itinérance de la carte 
+    </button>
+  </ion-list-header>
+     <ion-item>
       	<li ion-item *ngFor="let item of historique">
           <ion-icon name="bonhome" item-left></ion-icon>
           <b>{{item.prop_actu}}</b><br>

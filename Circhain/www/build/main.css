@@ -21274,7 +21274,7 @@ sub {
 }
 
 page-accueil .accueil img {
-  height: 50vh;
+  height: 40vh;
   width: auto;
   margin: auto;
   display: block;
@@ -21291,6 +21291,17 @@ page-carte-details .ion-md-bonhome {
 
 page-login .login img {
   height: 50vh;
+  width: auto;
+  margin: auto;
+  display: block;
+}
+
+page-scan .scan {
+  text-align: center;
+}
+
+page-scan .scan img {
+  height: 20vh;
   width: auto;
   margin: auto;
   display: block;

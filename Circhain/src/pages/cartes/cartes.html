@@ -10,7 +10,7 @@
 <ion-content>
   <ion-list>
     <button ion-item *ngFor="let item of cartes" (click)="itemTapped($event, item)">
-      <ion-icon name="ios-barcode" item-left></ion-icon>
+      <ion-icon name="carte" item-left></ion-icon>
       {{item.id_carte}}
     </button>
   </ion-list>
