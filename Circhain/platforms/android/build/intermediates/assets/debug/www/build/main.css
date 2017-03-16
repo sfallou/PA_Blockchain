@@ -21282,7 +21282,7 @@ page-accueil .accueil img {
 
 page-carte-details .ion-ios-bonhome,
 page-carte-details .ion-md-bonhome {
-  content: url(../../assets/img/bonhome.png);
+  content: url("../assets/img/bonhome.png");
   width: 52px;
   height: 42px;
   padding: 6px 4px 2px;
@@ -21298,12 +21298,16 @@ page-login .login img {
 
 page-tabs .ion-ios-accueil,
 page-tabs .ion-md-accueil,
+page-tabs .ion-wp-accueil,
 page-tabs .ion-ios-livia,
 page-tabs .ion-md-livia,
+page-tabs .ion-wp-livia,
 page-tabs .ion-ios-carte,
 page-tabs .ion-md-carte,
+page-tabs .ion-wp-carte,
 page-tabs .ion-ios-profil,
-page-tabs .ion-md-profil {
+page-tabs .ion-md-profil,
+page-tabs .ion-wp-profil {
   width: 52px;
   height: 42px;
   padding: 6px 4px 2px;
@@ -21311,21 +21315,25 @@ page-tabs .ion-md-profil {
 }
 
 page-tabs .ion-ios-livia,
-page-tabs .ion-md-livia {
-  content: url(/img/livia.png);
+page-tabs .ion-md-livia,
+page-tabs .ion-wp-livia {
+  content: url("../assets/img/livia.png");
 }
 
 page-tabs .ion-ios-carte,
-page-tabs .ion-md-carte {
-  content: url(/img/logo.png);
+page-tabs .ion-md-carte,
+page-tabs .ion-wp-carte {
+  content: url("../assets/img/logo.png");
 }
 
 page-tabs .ion-ios-profil,
-page-tabs .ion-md-profil {
-  content: url(/img/bonhome.png);
+page-tabs .ion-md-profil,
+page-tabs .ion-wp-profil {
+  content: url("../assets/img/bonhome.png");
 }
 
 page-tabs .ion-ios-accueil,
-page-tabs .ion-md-accueil {
-  content: url(/img/qrcode.png);
+page-tabs .ion-md-accueil,
+page-tabs .ion-wp-accueil {
+  content: url("../assets/img/qrcode.png");
 }

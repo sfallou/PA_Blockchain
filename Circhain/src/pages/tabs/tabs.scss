@@ -1,35 +1,44 @@
 page-tabs {
 	.ion-ios-accueil,
-	.ion-md-accueil, 
+	.ion-md-accueil,
+	.ion-wp-accueil, 
 	.ion-ios-livia,
 	.ion-md-livia,
+	.ion-wp-livia,
 	.ion-ios-carte,
 	.ion-md-carte,
+	.ion-wp-carte,
 	.ion-ios-profil,
-	.ion-md-profil, {
+	.ion-md-profil,
+	.ion-wp-profil, {
   	width: 52px;
   	height: 42px;
   	padding: 6px 4px 2px;
  	opacity: 0.9;
+ 	
 	}
 
 	.ion-ios-livia,
-	.ion-md-livia {
-  	content: url(/img/livia.png);
+	.ion-md-livia,
+	.ion-wp-livia {
+  	content: url('../assets/img/livia.png');
   }
   .ion-ios-carte,
-	.ion-md-carte {
-  	content: url(/img/logo.png);
+	.ion-md-carte,
+	.ion-wp-carte {
+  	content: url('../assets/img/logo.png');
   }
 
   .ion-ios-profil,
-	.ion-md-profil {
-  	content: url(/img/bonhome.png);
+	.ion-md-profil,
+	.ion-wp-profil {
+  	content: url('../assets/img/bonhome.png');
   }
 
   .ion-ios-accueil,
-	.ion-md-accueil {
-  	content: url(/img/qrcode.png);
+	.ion-md-accueil,
+	.ion-wp-accueil {
+  	content: url('../assets/img/qrcode.png');
   }
 
 }
