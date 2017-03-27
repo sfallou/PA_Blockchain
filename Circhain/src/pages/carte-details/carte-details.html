@@ -20,11 +20,22 @@
      </ion-item>
 
      <ion-item>
+      <b>Proprietaire final </b> <br> {{proprietaire_final}}
+     </ion-item>
+
+     <ion-item>
       <b>Prorietaire actuel  </b> <br> {{proprietaire_actu}}
      </ion-item>
 
      <ion-item>
       <b>État actuel de la carte </b> <br> {{etat_carte}}
+     </ion-item>
+
+     <ion-item>
+      <button ion-button color="secondary" (click)="infoCertification()">
+        <ion-icon name="ios-information-circle-outline" item-left></ion-icon>
+        <b> Certification  </b>
+      </button> <br> {{certification}}
      </ion-item>
 
      <ion-item>
