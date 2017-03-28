@@ -71,7 +71,7 @@ export class NotificationsPage {
     // on crée un popup
    let alert = this.alertCtrl.create({
       title: "Notification",
-      subTitle: item['type_notification']+" le "+ item['date_envoi'],
+      subTitle: "La carte n° : "+item['id_carte_concernee']+" envoyée a été " +item['type_notification']+" par " +item['id_emetteur']+" le "+ item['date_envoi'],
       buttons: ['OK']
     });
     alert.present();
@@ -80,7 +80,7 @@ export class NotificationsPage {
   itemTapped2(event, item) {
    let alert = this.alertCtrl.create({
       title: "Notification",
-      subTitle: item['type_notification']+" le "+ item['date_envoi'],
+       subTitle: "La carte n° "+ item['id_carte_concernee'] +" a été " +item['type_notification']+" à " +item['id_destinataire']+"  le "+ item['date_envoi'],
       buttons: ['OK']
     });
     alert.present();

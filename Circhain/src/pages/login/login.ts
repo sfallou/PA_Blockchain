@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {Validators, FormBuilder, FormGroup } from '@angular/forms';
-import {NavController, NavParams} from 'ionic-angular';
+import {NavController, NavParams, AlertController} from 'ionic-angular';
 import {CirchainService} from '../mesServices/circhainServices';
 import {LoginService} from '../mesServices/loginService';
 import { TabsPage } from '../tabs/tabs';
@@ -19,6 +19,7 @@ export class LoginPage {
   constructor(private formBuilder: FormBuilder,
               private infosActeur: CirchainService,
               private navController: NavController,
+              public alertCtrl: AlertController,
               private navParams: NavParams,
               private loginService: LoginService
               ) {
@@ -50,11 +51,17 @@ export class LoginPage {
             //console.log(this.loginService.getInfosActeur());
           }
           else{
-              console.log("Connexion non etablie");
+              console.log("Wrong")
               }
 				},
 				err => {
-					console.log(err);
+					//console.log(err);
+          let alert = this.alertCtrl.create({
+                title: "Attention!",
+                subTitle: "Les paramètres de connexion sont incorrects",
+                buttons: ['OK']
+              });
+              alert.present();
 				}
 			);
 

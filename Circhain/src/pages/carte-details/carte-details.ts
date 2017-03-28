@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController } from 'ionic-angular';
+import { NavController, NavParams,  ModalController } from 'ionic-angular';
 import {CirchainService} from '../mesServices/circhainServices';
 import {LoginService} from '../mesServices/loginService';
+import {InfosPage} from '../infos/infos';
 
 @Component({
   selector: 'page-carte-details',
@@ -22,7 +23,11 @@ export class CarteDetailsPage {
   proprietaire_actu : any;
   historique : any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController, private detailsCarte: CirchainService, private loginService: LoginService) {
+  constructor(public navCtrl: NavController, 
+              public navParams: NavParams, 
+              public modalCtrl: ModalController, 
+              private detailsCarte: CirchainService, 
+              private loginService: LoginService) {
     // If we navigated to this page, we will have an item available as a nav param
     this.selectedItem = navParams.get('item');
     this.acteur = JSON.parse(this.loginService.getInfosActeur());
@@ -30,7 +35,7 @@ export class CarteDetailsPage {
 				data => {
 					this.status = data.status;
 					//this.infosCarte = data.data;
-         console.log(data.data);
+         //console.log(data.data);
          this.id_carte = data.data.id_carte;
          this.proprietaire_final = data.data.proprietaire_final;
          this.certification = data.data.certification;
@@ -47,13 +52,18 @@ export class CarteDetailsPage {
 			);//
   }
 
+  
+
   infoCertification() {
-   let alert = this.alertCtrl.create({
-     title: "Information sur les certifications",
-     subTitle: "Certifiée A : la carte peut être intégrée dans un circuit d'avion,Certifié B : la carte peut être intégrée dans un circuit de train ",
-     buttons: ['OK']
-   });
-   alert.present();
-             
+
+  let obj = {A: "Certifiée A : la carte peut être intégrée dans un circuit d'avion",
+             B: "Certifiée B : la carte peut être intégrée dans un circuit de train", 
+             C: "Certifiée C : la carte peut être intégrée dans une carte mère d'ordinateur",
+             D: "Certifiée D : la carte peut être intégrée dans n'importe quel circuit",
+             E: "Certifiée E : pas encore défini",
+             Vide: "S'il n'y a pas de certification, la carte n'est pas garantie par le fabricant",
+           };
+  let myModal = this.modalCtrl.create(InfosPage, obj);
+  myModal.present();
   }
 }

@@ -31,33 +31,7 @@ export class AccueilPage {
       id: ['', Validators.required]
     });
     }
-    /*
-    scanCarte(){
-    //console.log(this.acteur.value.mdp);
-    this.infosActeur.scannerCarte(this.acteur['id_acteur'],this.carte.value.id).subscribe(
-				data => {
-					this.status = data.status;
-					this.result = data.data;
-					if(this.status === "OK" && this.result['proprietaire_actuel']===this.acteur['id_acteur']){
-						//console.log(this.result);
-						this.navController.push(ScanPage, {carte: this.result});
-						}
-					else{
-						//console.log("Not good");
-						let alert = this.alertCtrl.create({
-      					title: "Attention!",
-      					subTitle: "Vous n'avez pas le droit de scanner cette carte",
-      					buttons: ['OK']
-    					});
-    					alert.present();
-  						}
-				},
-				err => {
-					console.log(err);
-				}
-			);
-
-  }*/
+   
   scanCarte() {
          BarcodeScanner.scan().then((result) => {
         this.infosActeur.scannerCarte(this.acteur['id_acteur'],result.text).subscribe(

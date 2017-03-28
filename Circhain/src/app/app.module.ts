@@ -9,6 +9,7 @@ import { CarteDetailsPage } from '../pages/carte-details/carte-details';
 import { ProfilPage } from '../pages/profil/profil';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { ScanPage } from '../pages/scan/scan';
+import { InfosPage } from '../pages/infos/infos';
 import { TabsPage } from '../pages/tabs/tabs';
 
 @NgModule({
@@ -21,6 +22,7 @@ import { TabsPage } from '../pages/tabs/tabs';
     NotificationsPage,
     ProfilPage,
     ScanPage,
+    InfosPage,
     TabsPage
   ],
   imports: [
@@ -36,6 +38,7 @@ import { TabsPage } from '../pages/tabs/tabs';
     NotificationsPage,
     ProfilPage,
     ScanPage,
+    InfosPage,
     TabsPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
