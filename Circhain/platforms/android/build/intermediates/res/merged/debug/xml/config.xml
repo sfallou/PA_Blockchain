@@ -22,7 +22,7 @@
     <feature name="BarcodeScanner">
         <param name="android-package" value="com.phonegap.plugins.barcodescanner.BarcodeScanner" />
     </feature>
-    <name>Circhain</name>
+    <name>Livia</name>
     <description>Application Livia basée sur le principe de la blockchain pour gérer la supply-chain de Cirly </description>
     <author email="sfallou2010@hotmail.fr" href="http://www.cirly.com/">sfallou</author>
     <content src="index.html" />
