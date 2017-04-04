@@ -2,17 +2,31 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var request = require('request');
-var port = process.env.PORT || 3000;
 
 var infos="";
-var id_carte = "carte2";
+var id_carte = "carte1";
 var historique = [];
 var acteur = "" ;
-var currentInterval = setInterval(requete,1000);
+var currentInterval = setInterval(requete,1000,id_carte);
 
 
-// cours ; cd ../PA/PA_Blockchain/plaquette/
-
+request({
+        url: 'http://challenge-2016.eclair.ec-lyon.fr/circhain/api/acteur/historique/carte', //URL to hit
+        qs: {from: 'blog xample', time: +new Date()},
+        method: 'POST',
+        json: {
+                id_acteur: 'CIRLY',
+                id_carte: Id_carte,
+        }
+        },
+        function (error, response, body){
+                if(error) {
+                        console.log(error);
+                 } else {
+                        infos = body.data;
+			historique = infos.historique ;
+		}
+});
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -21,7 +35,8 @@ app.get('/', function(req, res){
 
 
 
-function requete(){
+function requete(Id_carte){
+	console.log('wololo');
 	request({
     		url: 'http://challenge-2016.eclair.ec-lyon.fr/circhain/api/acteur/historique/carte', //URL to hit
     		qs: {from: 'blog xample', time: +new Date()}, //Query string data
@@ -29,7 +44,7 @@ function requete(){
     		//Lets post the following key/values as form
     		json: {
         		id_acteur: 'CIRLY',
-			id_carte: id_carte, 
+			id_carte: Id_carte, 
     		}
 	},
 	function (error, response, body){
@@ -40,14 +55,14 @@ function requete(){
 			historique = infos.historique ;
        			// console.log(response.statusCode, infos);
 			if (historique.length != 0){
-	       			/*for(var i=0; i < historique.length; i++) {
+	       			for(var i=0; i < historique.length; i++) {
 	       	 			console.log(historique[i].prop_actu);
-        			} ; */
+        			} ;
 				acteur = historique[historique.length - 1].prop_actu ;
-				console.log(id_carte) ;		
-				console.log(acteur) ;
-				console.log(' ');	
-	        		io.emit('Maj',acteur) ;	
+				console.log("acteur :" + acteur) ;
+				console.log(Id_carte) ;		
+				console.log(' ') ;		
+				io.emit('Maj acteur',acteur) ;
 			}
 		}
 	}) ;
@@ -55,10 +70,11 @@ function requete(){
 
 
 
-io.on('connection', function(socket){		
-	socket.on('Maj',function(n_carte){
+io.on('connection', function(socket){
+	socket.on('Maj carte',function(n_carte){
+		console.log('a user connected');
 		id_carte = n_carte ;
-		console.log("Id : "+id_carte) ;
+		requete()
 	});
 
 }) ;
