@@ -1,43 +1,143 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>Blockchain</title>
-
+<link rel="stylesheet" type="text/css" href="style.css">
     
-
-  </head>
-  <body>
-    <form action="">
-      <select id="Carte"  >
-      	 <option value="carte1">carte 1</option>
-      	 <option value="carte2">carte 2</option>
-      	 <option value="carte3">carte 3</option>
-      	 <option value="carte4">carte 4</option>
-      	 <option value="carte5">carte 5</option>
-      	 <option value="carte6">carte 6</option>
-      	 <option value="carte7">carte 7</option>
-      	 <option value="carte8">carte 8</option>
-      	 <option value="carte9">carte 9</option>
-      	 <option value="carte10">carte 10</option>
-      </select><button>Ok</button>
-    </form>
-
-    <p id = "affichage_acteur">Chargement...</p>
-
- <script src="/socket.io/socket.io.js"></script>
+<script src="notrejs.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
   $(function () {
     var socket = io();
     $('form').submit(function(){
-	socket.emit('Maj', $('#Carte').val() );
+	socket.emit('Maj_carte', $('#Carte').val() );
         return false;
     });
-    socket.on('Maj', function(acteur){
-	$('#affichage_acteur').text(acteur) ;
+    socket.on('Maj_infos', function(infos){
+	var historique = infos.historique ;
+	var acteur = historique[historique.length -1] ; 
+	$('#id_carte').text($('#Carte').val()) ;
+	$('#id_prop').text(acteur.prop_actu) ;
+	$('#etat').text(infos.etat_carte) ;
+	if (infos.etat_carte == "reçue" ) {
+		$('#txt_prop').text("Propriétaire :") ;
+		$('#txt_date').text("Date de réception :") ;
+		$('#date'). text(acteur.date_recu) ;
+		}
+	else {
+		$('#txt_prop').text("Vers :") ;
+		$('#txt_date').text("Date d'envoi :") ;
+		$('#date'). text(acteur.date_emis) ;
+		}; 
 	});
   });
 </script>
+
+
+  </head>
+  <body>
+
+
+	<div>
+    	<form action="">
+      		<select id="Carte">
+      	 		<option value="carte1">carte 1</option>
+      	 		<option value="carte2">carte 2</option>
+      	 		<option value="carte3">carte 3</option>
+      	 		<option value="carte4">carte 4</option>
+      	 		<option value="carte5">carte 5</option>
+      	 		<option value="carte6">carte 6</option>
+      	 		<option value="carte7">carte 7</option>
+      	 		<option value="carte8">carte 8</option>
+      	 		<option value="carte9">carte 9</option>
+      			<option value="carte10">carte 10</option>
+      		</select><button>Ok</button>
+    	</form>
+	</div>
+    <!--p id = "affichage_acteur">Chargement...</p-->
+
+	<div id="Top" >
+    	<img  id="fondTop" src="Cirlybis.png" alt="HTML5 Icon" width="60" height="70">
+    </div>
+
+    <div>
+		<img  id="fond" src="Center_Picture.png" width="400" height="400">
+		<table id="tab1" align="center">		
+		<tr>
+			<th align="left" width = "130">Carte : </th>
+			<td align="left" id = "id_carte"></td>
+ 	
+		</tr>
+
+		<tr>
+			<th align="left" width = "130">Etat : </th>
+			<td align="left" id = "etat" ></td>
+		</tr>
+
+		<tr>
+			<th align="left" id = "txt_prop"  width = "130"> </th>
+			<td align="left" id = "id_prop" ></td>
+		</tr>
+		
+		<tr>
+			<th align="left" id = "txt_date" width = "130"></th>
+			<td align="left" id = "date" width = "60"></td>
+		</tr>
+
+		<!-- /*--------------------------------------------------------------------------*/ -->
+		</table>
+	</img>
+		
+		<!-- /*--------------------------------------------------------------------------*/>
+		<button id="hh"  onclick="showMe()"> Fonction ne sera pas utilisée :afficher table_cartes </button >
+		<!-- /*--------------------------------------------------------------------------*/ -->
+   	</div>
+		<div id="image1" onmouseover="mOver(1)"  onmouseout="mOut(1)" >
+		<img  id="logo1" src="Cirly.png" alt="HTML5 Icon" width="128" height="128">
+		<h1 id="societe1"></h1>
+		<h1 id="DateE1"></h1>
+		<h1 id="DateR1"></h1>
+		</div>
+
+		<div id="image2" onmouseover="mOver(2)"  onmouseout="mOut(2)" >
+		<img id="logo2" src="AsteelFlash.png" alt="HTML5 Icon" width="128" height="128">
+ 		<h1 id="societe2" ></h1>
+ 		<h1 id="DateE2"></h1>
+		<h1 id="DateR2"></h1>
+		</div>
+
+		<div id="image3" onmouseover="mOver(3)"  onmouseout="mOut(3)">
+		<img id="logo3" src="BSE.png" alt="HTML5 Icon" width="128" height="128">
+		 <h1 id="societe3" ></h1>
+		 <h1 id="DateE3"></h1>
+		<h1 id="DateR3"></h1>
+		</div>
+
+		<div id="image4" onmouseover="mOver(4)"  onmouseout="mOut(4)" >
+		<img id="logo4" src="CTSindustries.png" alt="HTML5 Icon" width="128" 		height="128">
+		 <h1 id="societe4" ></h1>
+		 <h1 id="DateE4"></h1>
+		<h1 id="DateR4"></h1>
+		</div>
+
+		<div id="image5" onmouseover="mOver(5)"  onmouseout="mOut(5)">
+		 <img id="logo5" src="Areva.png" alt="HTML5 Icon" width="128" height="128" >
+		 <h1 id="societe5" ></h1>
+		 <h1 id="DateE5"></h1>
+		<h1 id="DateR5"></h1>
+		</div>
+
+<!-- /*--------------------------------------------------------------------------*/ -->
+		<div id="axe1"> <img src="axe.png" alt="HTML5 Icon" width="100" height="60" > </div>
+		<div id="axe2"> <img src="axe.png" alt="HTML5 Icon" width="100" height="60" > </div>
+		<div id="axe3"> <img src="axe.png" alt="HTML5 Icon" width="100" height="60" > </div>
+		<div id="axe4"> <img src="axe.png" alt="HTML5 Icon" width="100" height="60" > </div>
+
+</div>	
+
+	
+
 
 
    
