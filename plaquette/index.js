@@ -6,7 +6,7 @@ var request = require('request');
 var port = process.env.PORT || 3000;
 
 var infos="";
-var id_carte = "carte2";
+var id_carte = "carte9";
 var historique = [];
 var acteur = "" ;
 var currentInterval = setInterval(requete,1000);
@@ -24,50 +24,29 @@ app.get('/', function(req, res){
 app.use('/', function(req, res){
   res.sendFile(__dirname + '/style.css');
 });
+
 /*
-app.use('/', function(req, res){
-  //res.sendFile(__dirname + '/notrejs.js');
-  res.sendFile('/Center_Picture.png');
-});
+
+function maj_chemin(Infos){
+	$('.modifiable').remove();
+	historique = infos.historique;
+	for(i=0; i < historique.length-1  ; i++){
+		var elemt = historique[i];
+		$('#dateE').append("<td class = 'modifiable date'>"+elemt.date_emis+"</td>");
+		$('#dateR').append("<td class = 'modifiable date'>"+elemt.date_recu+"</td>");
+		$('#image').append("<td class = 'modifiable'><img src = "+elemt.prop_actu+".png></img></td>");
+		$('#image').append("<td class = 'modifiable'><img src = xe.png></img></td>");	
+	}	
+	if (infos.etat_carte == "reçue" ) {
+		var elemt = historique[historique.length -1];
+		$('#dateE').append("<td class = 'modifiable date'>"+elemt.date_emis+"</td>");
+		$('#dateR').append("<td class = 'modifiable daye'>"+elemt.date_recu+"</td>");
+		$('#image').append("<td class = 'modifiable'><img src = "+elemt.prop_actu+".png></img></td>");	
+	
+	}
+
+};
 */
-/*
-app.use('/', function(req, res){
-  res.sendFile(__dirname + '/AsteelFlash.png');
-});
-
-app.use('/', function(req, res){
-  res.sendFile(__dirname + '/Areva.png');
-});
-
-app.use('/', function(req, res){
-  res.sendFile(__dirname + '/axe.png');
-});
-
-app.use('/', function(req, res){
-  res.sendFile(__dirname + '/BSE.png');
-});
-
-app.use('/', function(req, res){
-  res.sendFile(__dirname + '/CTS.png');
-});
-
-app.use('/', function(req, res){
-  res.sendFile(__dirname + '/Bird_Picture.png'); 
-});
-
-app.use('/', function(req, res){
-  //app.use(express.static('images')) ;
-  //app.use('/static', express.static(path.join(__dirname, 'public'))) ;
-
-
-});
-
-*/
-
-
-
-
-
 function requete(){
 	request({
     		url: 'http://challenge-2016.eclair.ec-lyon.fr/circhain/api/acteur/historique/carte', //URL to hit
@@ -86,13 +65,10 @@ function requete(){
         		infos = body.data;
 			console.log(body) ;
 			console.log(',');
-			console.log(infos.historique);
+			//console.log(infos.historique);
 			historique = infos.historique ;
-       			// console.log(response.statusCode, infos);
+       			console.log(historique);
 			if (historique.length != 0){
-	       			/*for(var i=0; i < historique.length; i++) {
-	       	 			console.log(historique[i].prop_actu);
-        			} ; */
 				acteur = historique ;
 				console.log(id_carte) ;		
 				//console.log(acteur) ;

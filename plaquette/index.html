@@ -8,15 +8,39 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
+
   $(function () {
     var socket = io();
     $('form').submit(function(){
 	socket.emit('Maj_carte', $('#Carte').val() );
         return false;
     });
-    socket.on('Maj_infos', function(infos){
+    socket.on('Maj_infos', function(infos){	
+	$('.modifiable').remove();
 	var historique = infos.historique ;
-	var acteur = historique[historique.length -1] ; 
+	var acteur = historique[historique.length -1] ;
+	for(i=0; i < historique.length-1  ; i++){
+		var elemt = historique[i];		
+		$('#dateE').append("<td id = c class = 'modifiable date'> ->"+elemt.date_emis.substr(12)+"</td>");
+		$('#dateR').append("<td id = 'dateR"+i+"' class = 'modifiable date'>"+elemt.date_recu.substr(12)+"-> </td>");
+		$('#image').append("<td class = 'modifiable'><img src = '"+elemt.prop_actu+"bis.png'  onmouseOver='mOver("+i+")' onmouseout='mOut("+i+")'  width='150' height='180'></img></td>");	
+		$('#Entreprise').append("<td class = 'modifiable'>"+elemt.prop_actu+"</td>");
+
+
+		$('#dateE').append("<td class = 'modifiable'></td>");
+		$('#dateR').append("<td class = 'modifiable'></td>");
+		$('#image').append("<td class = 'modifiable'><img src = 'axe.png'  width='150' height='100'></img></td>");
+		$('#Entreprise').append("<td class = 'modifiable'> </td>");
+	}	;
+  
+	if (infos.etat_carte == "reçue" ) {
+		$('#dateE').append("<td 'dateE"+i+"' class = 'modifiable date'> ->"+acteur.date_emis.substr(12)+"</td>");
+		$('#dateR').append("<td 'dateR"+i+"' class = 'modifiable daye'>"+acteur.date_recu.substr(12)+"-> </td>");
+		var i = historique.length-1 ;
+		$('#image').append("<td class = 'modifiable'><img src = '"+acteur.prop_actu+"bis.png'  onmouseOver='mOver("+i+")' onmouseout='mOut("+i+")' width='150' height='180' ></img></td>");	
+		$('#Entreprise').append("<td class = 'modifiable'>"+acteur.prop_actu+"</td>");
+	}  ;
+
 	$('#id_carte').text($('#Carte').val()) ;
 	$('#id_prop').text(acteur.prop_actu) ;
 	$('#etat').text(infos.etat_carte) ;
@@ -24,11 +48,13 @@
 		$('#txt_prop').text("Propriétaire :") ;
 		$('#txt_date').text("Date de réception :") ;
 		$('#date'). text(acteur.date_recu) ;
+		$("#fondTop").attr("src",acteur.prop_actu+"bis.png");
 		}
 	else {
 		$('#txt_prop').text("Vers :") ;
 		$('#txt_date').text("Date d'envoi :") ;
 		$('#date'). text(acteur.date_emis) ;
+		$("#fondTop").attr("src","Bird_Picture.png");
 		}; 
 	});
   });
@@ -57,8 +83,10 @@
 	</div>
     <!--p id = "affichage_acteur">Chargement...</p-->
 
+
+
 	<div id="Top" >
-    	<img  id="fondTop" src="Cirlybis.png" alt="HTML5 Icon" width="60" height="70">
+    	<img  id="fondTop" src="CIRLYbis.png" alt="HTML5 Icon" width="70" height="70">
     </div>
 
     <div>
@@ -85,61 +113,21 @@
 			<td align="left" id = "date" width = "60"></td>
 		</tr>
 
-		<!-- /*--------------------------------------------------------------------------*/ -->
 		</table>
-	</img>
-		
-		<!-- /*--------------------------------------------------------------------------*/>
-		<button id="hh"  onclick="showMe()"> Fonction ne sera pas utilisée :afficher table_cartes </button >
-		<!-- /*--------------------------------------------------------------------------*/ -->
-   	</div>
-		<div id="image1" onmouseover="mOver(1)"  onmouseout="mOut(1)" >
-		<img  id="logo1" src="Cirly.png" alt="HTML5 Icon" width="128" height="128">
-		<h1 id="societe1"></h1>
-		<h1 id="DateE1"></h1>
-		<h1 id="DateR1"></h1>
-		</div>
+	</div>
 
-		<div id="image2" onmouseover="mOver(2)"  onmouseout="mOut(2)" >
-		<img id="logo2" src="AsteelFlash.png" alt="HTML5 Icon" width="128" height="128">
- 		<h1 id="societe2" ></h1>
- 		<h1 id="DateE2"></h1>
-		<h1 id="DateR2"></h1>
-		</div>
-
-		<div id="image3" onmouseover="mOver(3)"  onmouseout="mOut(3)">
-		<img id="logo3" src="BSE.png" alt="HTML5 Icon" width="128" height="128">
-		 <h1 id="societe3" ></h1>
-		 <h1 id="DateE3"></h1>
-		<h1 id="DateR3"></h1>
-		</div>
-
-		<div id="image4" onmouseover="mOver(4)"  onmouseout="mOut(4)" >
-		<img id="logo4" src="CTSindustries.png" alt="HTML5 Icon" width="128" 		height="128">
-		 <h1 id="societe4" ></h1>
-		 <h1 id="DateE4"></h1>
-		<h1 id="DateR4"></h1>
-		</div>
-
-		<div id="image5" onmouseover="mOver(5)"  onmouseout="mOut(5)">
-		 <img id="logo5" src="Areva.png" alt="HTML5 Icon" width="128" height="128" >
-		 <h1 id="societe5" ></h1>
-		 <h1 id="DateE5"></h1>
-		<h1 id="DateR5"></h1>
-		</div>
-
-<!-- /*--------------------------------------------------------------------------*/ -->
-		<div id="axe1"> <img src="axe.png" alt="HTML5 Icon" width="100" height="60" > </div>
-		<div id="axe2"> <img src="axe.png" alt="HTML5 Icon" width="100" height="60" > </div>
-		<div id="axe3"> <img src="axe.png" alt="HTML5 Icon" width="100" height="60" > </div>
-		<div id="axe4"> <img src="axe.png" alt="HTML5 Icon" width="100" height="60" > </div>
-
-</div>	
-
+<div  id = "chemin">		 
+<table>  
+	<tr id="dateE"></tr>
+	<tr id="dateR"></tr>
+	<tr id="image"></tr>
+	<tr id="Entreprise"></tr>
+</table>
+</div>
 	
 
-
-
-   
   </body>
 </html>
+
+
+
