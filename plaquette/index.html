@@ -21,9 +21,9 @@
 	var acteur = historique[historique.length -1] ;
 	for(i=0; i < historique.length-1  ; i++){
 		var elemt = historique[i];		
-		$('#dateE').append("<td id = c class = 'modifiable date'> ->"+elemt.date_emis.substr(12)+"</td>");
-		$('#dateR').append("<td id = 'dateR"+i+"' class = 'modifiable date'>"+elemt.date_recu.substr(12)+"-> </td>");
-		$('#image').append("<td class = 'modifiable'><img src = '"+elemt.prop_actu+"bis.png'  onmouseOver='mOver("+i+")' onmouseout='mOut("+i+")'  width='150' height='180'></img></td>");	
+		$('#dateE').append("<td id = 'dateE"+i+"' class = 'modifiable date'> R : "+elemt.date_emis.substr(12)+"</td>");
+		$('#dateR').append("<td id = 'dateR"+i+"' class = 'modifiable date'> E : "+elemt.date_recu.substr(12)+"</td>");
+		$('#image').append("<td class = 'modifiable'><img src = '"+elemt.prop_actu+"bis.png'  onmouseover='mOver("+i+")' onmouseout='mOut("+i+")'  width='150' height='180'></img></td>");	
 		$('#Entreprise').append("<td class = 'modifiable'>"+elemt.prop_actu+"</td>");
 
 
@@ -34,8 +34,8 @@
 	}	;
   
 	if (infos.etat_carte == "reçue" ) {
-		$('#dateE').append("<td 'dateE"+i+"' class = 'modifiable date'> ->"+acteur.date_emis.substr(12)+"</td>");
-		$('#dateR').append("<td 'dateR"+i+"' class = 'modifiable daye'>"+acteur.date_recu.substr(12)+"-> </td>");
+		$('#dateE').append("<td 'dateE"+i+"' class = 'modifiable date'> E : "+acteur.date_emis.substr(12)+"</td>");
+		$('#dateR').append("<td 'dateR"+i+"' class = 'modifiable daye'> R : "+acteur.date_recu.substr(12)+"</td>");
 		var i = historique.length-1 ;
 		$('#image').append("<td class = 'modifiable'><img src = '"+acteur.prop_actu+"bis.png'  onmouseOver='mOver("+i+")' onmouseout='mOut("+i+")' width='150' height='180' ></img></td>");	
 		$('#Entreprise').append("<td class = 'modifiable'>"+acteur.prop_actu+"</td>");
@@ -54,7 +54,7 @@
 		$('#txt_prop').text("Vers :") ;
 		$('#txt_date').text("Date d'envoi :") ;
 		$('#date'). text(acteur.date_emis) ;
-		$("#fondTop").attr("src","Bird_Picture.png");
+		$("#fondTop").attr("src","test.gif");
 		}; 
 	});
   });
@@ -81,15 +81,13 @@
       		</select><button>Ok</button>
     	</form>
 	</div>
-    <!--p id = "affichage_acteur">Chargement...</p-->
-
-
 
 	<div id="Top" >
     	<img  id="fondTop" src="CIRLYbis.png" alt="HTML5 Icon" width="70" height="70">
     </div>
 
-    <div>
+    <div>	
+		<table id="grosse_table">
 		<img  id="fond" src="Center_Picture.png" width="400" height="400">
 		<table id="tab1" align="center">		
 		<tr>
@@ -115,7 +113,6 @@
 
 		</table>
 	</div>
-
 <div  id = "chemin">		 
 <table>  
 	<tr id="dateE"></tr>

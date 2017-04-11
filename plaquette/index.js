@@ -12,8 +12,6 @@ var acteur = "" ;
 var currentInterval = setInterval(requete,1000);
 
 
-// cours ; cd ../PA/PA_Blockchain/plaquette/
-
 app.use(express.static('images')) ;
 
 app.get('/', function(req, res){
