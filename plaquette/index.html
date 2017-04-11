@@ -4,7 +4,6 @@
     <title>Blockchain</title>
 <link rel="stylesheet" type="text/css" href="style.css">
     
-<script src="notrejs.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
@@ -37,7 +36,9 @@
 		$('#dateE').append("<td 'dateE"+i+"' class = 'modifiable date'> E : "+acteur.date_emis.substr(12)+"</td>");
 		$('#dateR').append("<td 'dateR"+i+"' class = 'modifiable daye'> R : "+acteur.date_recu.substr(12)+"</td>");
 		var i = historique.length-1 ;
-		$('#image').append("<td class = 'modifiable'><img src = '"+acteur.prop_actu+"bis.png'  onmouseOver='mOver("+i+")' onmouseout='mOut("+i+")' width='150' height='180' ></img></td>");	
+		$('#image').append("<td class = 'modifiable'><img src = '"+acteur.prop_actu+"bis.png'   width='150' height='180' ></img></td>"); 
+//on prévoyait de n'afficher les dates que si on passe la souris dessus, on a annule par manque de temps
+//onmouseOver='mOver("+i+")' onmouseout='mOut("+i+")'	
 		$('#Entreprise').append("<td class = 'modifiable'>"+acteur.prop_actu+"</td>");
 	}  ;
 
@@ -54,7 +55,7 @@
 		$('#txt_prop').text("Vers :") ;
 		$('#txt_date').text("Date d'envoi :") ;
 		$('#date'). text(acteur.date_emis) ;
-		$("#fondTop").attr("src","test.gif");
+		$("#fondTop").attr("src","livia.gif");
 		}; 
 	});
   });
@@ -82,12 +83,12 @@
     	</form>
 	</div>
 
-	<div id="Top" >
-    	<img  id="fondTop" src="CIRLYbis.png" alt="HTML5 Icon" width="70" height="70">
+	<div id="Top" ><span id = "image_gif">
+    	<img  id="fondTop" src="CIRLYbis.png" alt="HTML5 Icon" width="150" height="150"></span>
     </div>
 
     <div>	
-		<table id="grosse_table">
+		
 		<img  id="fond" src="Center_Picture.png" width="400" height="400">
 		<table id="tab1" align="center">		
 		<tr>
