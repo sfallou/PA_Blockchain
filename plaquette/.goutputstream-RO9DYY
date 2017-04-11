@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blockchain</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+    
+<script src="notrejs.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+
+  $(function () {
+    var socket = io();
+    $('form').submit(function(){
+	socket.emit('Maj_carte', $('#Carte').val() );
+        return false;
+    });
+    socket.on('Maj_infos', function(infos){	
+	$('.modifiable').remove();
+	var historique = infos.historique ;
+	var acteur = historique[historique.length -1] ;
+	for(i=0; i < historique.length-1  ; i++){
+		var elemt = historique[i];		
+		$('#dateE').append("<td id = 'dateE"+i+"' class = 'modifiable date'> R : "+elemt.date_emis.substr(12)+"</td>");
+		$('#dateR').append("<td id = 'dateR"+i+"' class = 'modifiable date'> E : "+elemt.date_recu.substr(12)+"</td>");
+		$('#image').append("<td class = 'modifiable'><img src = '"+elemt.prop_actu+"bis.png'  onmouseover='mOver("+i+")' onmouseout='mOut("+i+")'  width='150' height='180'></img></td>");	
+		$('#Entreprise').append("<td class = 'modifiable'>"+elemt.prop_actu+"</td>");
+
+
+		$('#dateE').append("<td class = 'modifiable'></td>");
+		$('#dateR').append("<td class = 'modifiable'></td>");
+		$('#image').append("<td class = 'modifiable'><img src = 'axe.png'  width='150' height='100'></img></td>");
+		$('#Entreprise').append("<td class = 'modifiable'> </td>");
+	}	;
+  
+	if (infos.etat_carte == "reçue" ) {
+		$('#dateE').append("<td 'dateE"+i+"' class = 'modifiable date'> E : "+acteur.date_emis.substr(12)+"</td>");
+		$('#dateR').append("<td 'dateR"+i+"' class = 'modifiable daye'> R : "+acteur.date_recu.substr(12)+"</td>");
+		var i = historique.length-1 ;
+		$('#image').append("<td class = 'modifiable'><img src = '"+acteur.prop_actu+"bis.png'  onmouseOver='mOver("+i+")' onmouseout='mOut("+i+")' width='150' height='180' ></img></td>");	
+		$('#Entreprise').append("<td class = 'modifiable'>"+acteur.prop_actu+"</td>");
+	}  ;
+
+	$('#id_carte').text($('#Carte').val()) ;
+	$('#id_prop').text(acteur.prop_actu) ;
+	$('#etat').text(infos.etat_carte) ;
+	if (infos.etat_carte == "reçue" ) {
+		$('#txt_prop').text("Propriétaire :") ;
+		$('#txt_date').text("Date de réception :") ;
+		$('#date'). text(acteur.date_recu) ;
+		$("#fondTop").attr("src",acteur.prop_actu+"bis.png");
+		}
+	else {
+		$('#txt_prop').text("Vers :") ;
+		$('#txt_date').text("Date d'envoi :") ;
+		$('#date'). text(acteur.date_emis) ;
+		$("#fondTop").attr("src","test.gif");
+		}; 
+	});
+  });
+</script>
+
+
+  </head>
+  <body>
+
+
+	<div>
+    	<form action="">
+      		<select id="Carte">
+      	 		<option value="carte1">carte 1</option>
+      	 		<option value="carte2">carte 2</option>
+      	 		<option value="carte3">carte 3</option>
+      	 		<option value="carte4">carte 4</option>
+      	 		<option value="carte5">carte 5</option>
+      	 		<option value="carte6">carte 6</option>
+      	 		<option value="carte7">carte 7</option>
+      	 		<option value="carte8">carte 8</option>
+      	 		<option value="carte9">carte 9</option>
+      			<option value="carte10">carte 10</option>
+      		</select><button>Ok</button>
+    	</form>
+	</div>
+
+	<div id="Top" >
+    	<img  id="fondTop" src="CIRLYbis.png" alt="HTML5 Icon" width="70" height="70">
+    </div>
+
+    <div>	
+		<img  id="fond" src="Center_Picture.png" width="400" height="400">
+		<table id="tab1" align="center">		
+		<tr>
+			<th align="left" width = "130">Carte : </th>
+			<td align="left" id = "id_carte"></td>
+ 	
+		</tr>
+
+		<tr>
+			<th align="left" width = "130">Etat : </th>
+			<td align="left" id = "etat" ></td>
+		</tr>
+
+		<tr>
+			<th align="left" id = "txt_prop"  width = "130"> </th>
+			<td align="left" id = "id_prop" ></td>
+		</tr>
+		
+		<tr>
+			<th align="left" id = "txt_date" width = "130"></th>
+			<td align="left" id = "date" width = "60"></td>
+		</tr>
+
+		</table>
+	</div>
+<div  id = "chemin">		 
+<table>  
+	<tr id="dateE"></tr>
+	<tr id="dateR"></tr>
+	<tr id="image"></tr>
+	<tr id="Entreprise"></tr>
+</table>
+</div>
+	
+
+  </body>
+</html>
+
+
+
